@@ -11,6 +11,10 @@ object HomeScreen: Destinations{
 object StartAMatchScreen: Destinations{
     override val route: String = "StartAMatchScreen"
 }
+object StartAMatchScreen2: Destinations{
+    override val route: String = "StartAMatchScreen2"
+}
+
 object StartATournamentScreen: Destinations{
     override val route: String = "StartATournament"
 }
@@ -20,8 +24,8 @@ object LiveMatchesScreen: Destinations{
 object ScheduleScreen: Destinations{
     override val route: String = "Schedule"
 }
-object FindAPlayerScreen: Destinations{
-    override val route: String = "Schedule"
+object SearchScreen: Destinations{
+    override val route: String = "SearchScreen"
 }
 object ShopScreen: Destinations{
     override val route: String = "ShopScreen"

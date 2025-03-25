@@ -35,11 +35,17 @@ fun MainScreen() {
         composable(HomeScreen.route) {
             HomeScreen(navController)
         }
+        composable(SearchScreen.route) {
+            SearchScreen(navController)
+        }
         composable(ShopScreen.route) {
             ShopScreen(navController)
         }
         composable(StartAMatchScreen.route) {
             StartAMatchScreen(navController)
+        }
+        composable(StartAMatchScreen2.route) {
+            StartAMatchScreen2(navController)
         }
         composable(StartATournamentScreen.route) {
             StartATournamentScreen(navController)

@@ -50,7 +50,7 @@ fun MatchDisplaySummeryCard(){
             }
             HorizontalDivider()
             Row {
-                Text("Highlight / Summery" , modifier = Modifier.padding(10.dp))
+                Text("Highlight / Summary" , modifier = Modifier.padding(10.dp))
             }
         }
     }

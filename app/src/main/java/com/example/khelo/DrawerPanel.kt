@@ -238,7 +238,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                     }
                     )
             )
-            Icon(Icons.Default.Search, contentDescription = "Search icon")
+            Icon(Icons.Default.Search, contentDescription = "Search icon" , Modifier.clickable(onClick = {navController.navigate(SearchScreen.route)}))
             Icon(Icons.Default.AddCircle, contentDescription = "Add icon",
                 modifier = Modifier
                     .clickable(onClick = {
