@@ -24,11 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.khelo.ui.theme.SecondaryGreen
 
 @Composable
 fun ProfileCard(){
     Card(onClick = {}, modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
-        Column (modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)){
+        Column (modifier = Modifier.background(color = SecondaryGreen)){
             Row (verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceEvenly , modifier = Modifier.padding(10.dp)){
                 Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = "" ,
                     modifier = Modifier

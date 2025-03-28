@@ -47,11 +47,19 @@ fun HomeScreen(navController: NavHostController) {
                 Row (modifier = Modifier.padding(16.dp)){
                     Text("Matches", fontSize = 20.sp)
                 }
+
+                //Match Display Cards
                 Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
                     MatchDisplaySummeryCard()
                     MatchDisplaySummeryCard()
                     MatchDisplaySummeryCard()
                 }
+
+                Row (modifier = Modifier.padding(16.dp)){
+                    Text("Articles", fontSize = 20.sp)
+                }
+
+
 
             }
 

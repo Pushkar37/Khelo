@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,12 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.khelo.ui.theme.SecondaryGreen
 
 @Preview
 @Composable
 fun MatchDisplaySummeryCard(){
     Card(onClick = {}, modifier = Modifier.padding(horizontal = 10.dp).size(300.dp,185.dp) , elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
-        Column (modifier = Modifier.background(MaterialTheme.colorScheme.primaryContainer)){
+        Column (modifier = Modifier.background(SecondaryGreen.copy(0.5f)).fillMaxSize()){
             Row (verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceBetween , modifier = Modifier
                 .padding(10.dp)
                 .fillMaxWidth()){
