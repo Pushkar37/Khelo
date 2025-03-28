@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +48,23 @@ fun MainScreen() {
         }
         composable(StartAMatchScreen2.route) {
             StartAMatchScreen2(navController)
+        }
+        composable(
+            "TossAndPlaying11Screen?team1Players={team1Players}&team2Players={team2Players}",
+            arguments = listOf(
+                navArgument("team1Players") { type = NavType.StringType },
+                navArgument("team2Players") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val team1Players = backStackEntry.arguments?.getString("team1Players")
+                ?.split(",") ?: emptyList()
+            val team2Players = backStackEntry.arguments?.getString("team2Players")
+                ?.split(",") ?: emptyList()
+
+            TossAndPlaying11Screen(navController, team1Players, team2Players)
+        }
+        composable("MatchScoringScreen") {
+            MatchScoringScreen(navController)
         }
         composable(StartATournamentScreen.route) {
             StartATournamentScreen(navController)

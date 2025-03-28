@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,6 +37,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,8 +53,19 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import com.example.khelo.ui.theme.PrimaryGreen
+import android.widget.Toast
+import androidx.compose.material3.SnackbarHost
+import kotlinx.coroutines.launch
+import java.io.Serializable
+
+data class PlayerData(val team1Players: List<String>, val team2Players: List<String>) : Serializable
 
 @Composable
 fun StartAMatchScreen2(navController: NavHostController) {
@@ -59,17 +73,25 @@ fun StartAMatchScreen2(navController: NavHostController) {
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-
+    val snackbarHostState = remember { SnackbarHostState() }
 
     var team1player by remember { mutableStateOf("") }
     var team2player by remember { mutableStateOf("") }
-
 
     // State to store entered items
     var enteredItems by remember { mutableStateOf(mapOf(
         "team1Players" to emptyList<String>(),
         "team2Players" to emptyList<String>(),
     )) }
+
+    // Toss state
+    var tossWinner by remember { mutableStateOf("") }
+    var tossDecision by remember { mutableStateOf("") }
+    val tossOptions = listOf("Bat", "Field")
+
+    // Playing 11 state
+    var selectedTeam1Players by remember { mutableStateOf(emptyList<String>()) }
+    var selectedTeam2Players by remember { mutableStateOf(emptyList<String>()) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -82,7 +104,8 @@ fun StartAMatchScreen2(navController: NavHostController) {
                     scope,
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController) },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
         ) { paddingValues ->
             Column(
                 modifier = Modifier
@@ -105,24 +128,31 @@ fun StartAMatchScreen2(navController: NavHostController) {
                         value = team1player,
                         onValueChange = {
                             team1player = it
-                            // Add item to list when user presses enter
-                            if (it.endsWith("\n")) {
-                                val newItem = it.trimEnd('\n')
-                                if (newItem.isNotEmpty()) {
-                                    enteredItems = enteredItems.toMutableMap().apply {
-                                        this["team1Players"] = this["team1Players"]!!.toMutableList().apply {
-                                            add(newItem)
-                                        }
-                                    }
-                                    team1player = ""
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        label = { Text("Team 1 Player Name") }
+                    )
+
+                    // Add Team 1 Player Button
+                    Button(
+                        onClick = {
+                            if (team1player.isNotBlank()) {
+                                val currentTeam1Players = enteredItems["team1Players"] ?: emptyList()
+                                enteredItems = enteredItems.toMutableMap().apply {
+                                    this["team1Players"] = currentTeam1Players + team1player
                                 }
+                                team1player = ""
                             }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.Transparent, RectangleShape)
-                            .padding(vertical = 8.dp)
-                    )
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(PrimaryGreen)
+                    ) {
+                        Text("Add Team 1 Player")
+                    }
 
                     Text(text = "Add Team 2 Player", fontSize = 16.sp, fontWeight = FontWeight.Medium)
 
@@ -130,135 +160,152 @@ fun StartAMatchScreen2(navController: NavHostController) {
                         value = team2player,
                         onValueChange = {
                             team2player = it
-                            if (it.endsWith("\n")) {
-                                val newItem = it.trimEnd('\n')
-                                if (newItem.isNotEmpty()) {
-                                    enteredItems = enteredItems.toMutableMap().apply {
-                                        this["team2Players"] = this["team2Players"]!!.toMutableList().apply {
-                                            add(newItem)
-                                        }
-                                    }
-                                    team2player = ""
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        label = { Text("Team 2 Player Name") }
+                    )
+
+                    // Add Team 2 Player Button
+                    Button(
+                        onClick = {
+                            if (team2player.isNotBlank()) {
+                                val currentTeam2Players = enteredItems["team2Players"] ?: emptyList()
+                                enteredItems = enteredItems.toMutableMap().apply {
+                                    this["team2Players"] = currentTeam2Players + team2player
                                 }
+                                team2player = ""
                             }
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(Color.Transparent, RectangleShape)
-                            .padding(vertical = 8.dp)
-                    )
-
-                    // Display entered items
-                    Text(text = "Full Squad", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-
-                    // Team 1 Players
-                    if (enteredItems["team1Players"]!!.isNotEmpty()) {
-                        Text(text = "Team 1 Players", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                        enteredItems["team1Players"]!!.forEachIndexed { index, item ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .clickable {
-                                        // Handle item click (edit)
-                                    },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = item,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                IconButton(
-                                    onClick = {
-                                        enteredItems = enteredItems.toMutableMap().apply {
-                                            this["team1Players"] = this["team1Players"]!!.toMutableList().apply {
-                                                removeAt(index)
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Delete item",
-                                        tint = Color.Red
-                                    )
-                                }
-                            }
-                        }
+                            .padding(16.dp),
+                        colors = ButtonDefaults.buttonColors(PrimaryGreen)
+                    ) {
+                        Text("Add Team 2 Player")
                     }
 
-                    // Team 2 Players
-                    if (enteredItems["team2Players"]!!.isNotEmpty()) {
-                        Text(text = "Team 2 Players", style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-                        enteredItems["team2Players"]!!.forEachIndexed { index, item ->
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                                    .clickable {
-                                        // Handle item click (edit)
-                                    },
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = item,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                IconButton(
-                                    onClick = {
-                                        enteredItems = enteredItems.toMutableMap().apply {
-                                            this["team2Players"] = this["team2Players"]!!.toMutableList().apply {
-                                                removeAt(index)
-                                            }
-                                        }
-                                    }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Delete,
-                                        contentDescription = "Delete item",
-                                        tint = Color.Red
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Column (verticalArrangement = Arrangement.Bottom,
+                    // Display Team 1 Players
+                    Text(text = "Team 1 Players", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Column(
                         modifier = Modifier
-                            .padding(10.dp)
-                            .fillMaxSize()
-                    ){
-                        Row (horizontalArrangement = Arrangement.SpaceEvenly,
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 20.dp)
-                        ){
-                            OutlinedButton(
-                                onClick = {  },
-                                border = BorderStroke(1.dp, PrimaryGreen),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = PrimaryGreen
-                                ),
-                            ){
-                                Text("Skip", fontWeight = FontWeight.Medium)
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        (enteredItems["team1Players"] ?: emptyList()).forEach { player ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = player,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(
+                                    onClick = {
+                                        val currentTeam1Players = enteredItems["team1Players"] ?: emptyList()
+                                        enteredItems = enteredItems.toMutableMap().apply {
+                                            this["team1Players"] = currentTeam1Players - player
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete player"
+                                    )
+                                }
                             }
+                        }
+                    }
 
-                            OutlinedButton(
-                                onClick = { TODO() },
-                                border = BorderStroke(1.dp, PrimaryGreen),
-                                colors = ButtonDefaults.outlinedButtonColors(
-                                    contentColor = Color.White,
-                                    containerColor = PrimaryGreen
-                                ),
-                            ){
-                                Text("Next", fontWeight = FontWeight.Medium)
+                    // Display Team 2 Players
+                    Text(text = "Team 2 Players", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        (enteredItems["team2Players"] ?: emptyList()).forEach { player ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                            ) {
+                                Text(
+                                    text = player,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                IconButton(
+                                    onClick = {
+                                        val currentTeam2Players = enteredItems["team2Players"] ?: emptyList()
+                                        enteredItems = enteredItems.toMutableMap().apply {
+                                            this["team2Players"] = currentTeam2Players - player
+                                        }
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = "Delete player"
+                                    )
+                                }
                             }
+                        }
+                    }
+
+                    // Action Buttons
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 32.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        OutlinedButton(
+                            onClick = {  },
+                            border = BorderStroke(1.dp, PrimaryGreen),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = PrimaryGreen
+                            ),
+                        ){
+                            Text("Skip", fontWeight = FontWeight.Medium)
+                        }
+
+                        OutlinedButton(
+                            onClick = {
+                                // Get the current player lists
+                                val team1Players = enteredItems["team1Players"] ?: emptyList()
+                                val team2Players = enteredItems["team2Players"] ?: emptyList()
+                                
+                                if (team1Players.isNotEmpty() && team2Players.isNotEmpty()) {
+                                    // Convert lists to comma-separated strings
+                                    val team1 = team1Players.joinToString(",")
+                                    val team2 = team2Players.joinToString(",")
+                                    
+                                    // Navigate to TossAndPlaying11Screen with the player data
+                                    navController.navigate("TossAndPlaying11Screen?team1Players=$team1&team2Players=$team2") {
+                                        launchSingleTop = true
+                                    }
+                                } else {
+                                    // Show a toast or snackbar if no players are added
+                                    scope.launch {
+                                        snackbarHostState.showSnackbar(
+                                            "Please add at least one player to both teams"
+                                        )
+                                    }
+                                }
+                            },
+                            border = BorderStroke(1.dp, PrimaryGreen),
+                            colors = ButtonDefaults.outlinedButtonColors(
+                                contentColor = Color.White,
+                                containerColor = PrimaryGreen
+                            ),
+                        ) {
+                            Text("Next", fontWeight = FontWeight.Medium)
                         }
                     }
                 }
             }
         }
     }
-
 }

@@ -15,6 +15,10 @@ object StartAMatchScreen2: Destinations{
     override val route: String = "StartAMatchScreen2"
 }
 
+object MatchScoringScreen: Destinations{
+    override val route: String = "MatchScoringScreen"
+}
+
 object StartATournamentScreen: Destinations{
     override val route: String = "StartATournament"
 }
@@ -30,5 +34,3 @@ object SearchScreen: Destinations{
 object ShopScreen: Destinations{
     override val route: String = "ShopScreen"
 }
-
-
