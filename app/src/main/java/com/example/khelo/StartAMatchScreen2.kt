@@ -68,7 +68,7 @@ import java.io.Serializable
 data class PlayerData(val team1Players: List<String>, val team2Players: List<String>) : Serializable
 
 @Composable
-fun StartAMatchScreen2(navController: NavHostController) {
+fun StartAMatchScreen2(navController: NavHostController, team1Name: String = "Team 1", team2Name: String = "Team 2") {
 
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -122,7 +122,7 @@ fun StartAMatchScreen2(navController: NavHostController) {
                         .fillMaxWidth()
                         .fillMaxHeight(0.8f)
                 ){
-                    Text(text = "Add Team 1 Player", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Text(text = "Add $team1Name Player", fontSize = 16.sp, fontWeight = FontWeight.Medium)
 
                     TextField(
                         value = team1player,
@@ -132,7 +132,7 @@ fun StartAMatchScreen2(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        label = { Text("Team 1 Player Name") }
+                        label = { Text("$team1Name Player Name") }
                     )
 
                     // Add Team 1 Player Button
@@ -151,10 +151,10 @@ fun StartAMatchScreen2(navController: NavHostController) {
                             .padding(16.dp),
                         colors = ButtonDefaults.buttonColors(PrimaryGreen)
                     ) {
-                        Text("Add Team 1 Player")
+                        Text("Add $team1Name Player")
                     }
 
-                    Text(text = "Add Team 2 Player", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Text(text = "Add $team2Name Player", fontSize = 16.sp, fontWeight = FontWeight.Medium)
 
                     TextField(
                         value = team2player,
@@ -164,7 +164,7 @@ fun StartAMatchScreen2(navController: NavHostController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        label = { Text("Team 2 Player Name") }
+                        label = { Text("$team2Name Player Name") }
                     )
 
                     // Add Team 2 Player Button
@@ -183,11 +183,11 @@ fun StartAMatchScreen2(navController: NavHostController) {
                             .padding(16.dp),
                         colors = ButtonDefaults.buttonColors(PrimaryGreen)
                     ) {
-                        Text("Add Team 2 Player")
+                        Text("Add $team2Name Player")
                     }
 
                     // Display Team 1 Players
-                    Text(text = "Team 1 Players", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Text(text = "$team1Name Players", fontSize = 16.sp, fontWeight = FontWeight.Medium)
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -221,7 +221,7 @@ fun StartAMatchScreen2(navController: NavHostController) {
                     }
 
                     // Display Team 2 Players
-                    Text(text = "Team 2 Players", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                    Text(text = "$team2Name Players", fontSize = 16.sp, fontWeight = FontWeight.Medium)
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -282,8 +282,8 @@ fun StartAMatchScreen2(navController: NavHostController) {
                                     val team1 = team1Players.joinToString(",")
                                     val team2 = team2Players.joinToString(",")
                                     
-                                    // Navigate to TossAndPlaying11Screen with the player data
-                                    navController.navigate("TossAndPlaying11Screen?team1Players=$team1&team2Players=$team2") {
+                                    // Navigate to TossAndPlaying11Screen with the player data and team names
+                                    navController.navigate("TossAndPlaying11Screen?team1Players=$team1&team2Players=$team2&team1Name=${team1Name}&team2Name=${team2Name}") {
                                         launchSingleTop = true
                                     }
                                 } else {

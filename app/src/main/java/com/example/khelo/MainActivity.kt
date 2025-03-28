@@ -46,22 +46,34 @@ fun MainScreen() {
         composable(StartAMatchScreen.route) {
             StartAMatchScreen(navController)
         }
-        composable(StartAMatchScreen2.route) {
-            StartAMatchScreen2(navController)
+        composable(
+            "StartAMatchScreen2?team1Name={team1Name}&team2Name={team2Name}",
+            arguments = listOf(
+                navArgument("team1Name") { type = NavType.StringType },
+                navArgument("team2Name") { type = NavType.StringType }
+            )
+        ) { backStackEntry ->
+            val team1Name = backStackEntry.arguments?.getString("team1Name") ?: "Team 1"
+            val team2Name = backStackEntry.arguments?.getString("team2Name") ?: "Team 2"
+            StartAMatchScreen2(navController, team1Name, team2Name)
         }
         composable(
-            "TossAndPlaying11Screen?team1Players={team1Players}&team2Players={team2Players}",
+            "TossAndPlaying11Screen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}",
             arguments = listOf(
                 navArgument("team1Players") { type = NavType.StringType },
-                navArgument("team2Players") { type = NavType.StringType }
+                navArgument("team2Players") { type = NavType.StringType },
+                navArgument("team1Name") { type = NavType.StringType },
+                navArgument("team2Name") { type = NavType.StringType }
             )
         ) { backStackEntry ->
             val team1Players = backStackEntry.arguments?.getString("team1Players")
                 ?.split(",") ?: emptyList()
             val team2Players = backStackEntry.arguments?.getString("team2Players")
                 ?.split(",") ?: emptyList()
+            val team1Name = backStackEntry.arguments?.getString("team1Name") ?: "Team 1"
+            val team2Name = backStackEntry.arguments?.getString("team2Name") ?: "Team 2"
 
-            TossAndPlaying11Screen(navController, team1Players, team2Players)
+            TossAndPlaying11Screen(navController, team1Players, team2Players, team1Name, team2Name)
         }
         composable("MatchScoringScreen") {
             MatchScoringScreen(navController)

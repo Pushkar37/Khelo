@@ -110,7 +110,7 @@ fun StartAMatchScreen(navController: NavHostController) {
                         onClick = {
                             if (team1.isNotBlank() && team2.isNotBlank() && groundName.isNotBlank() && overs.isNotBlank()) {
                                 try {
-                                    navController.navigate(StartAMatchScreen2.route) {
+                                    navController.navigate("StartAMatchScreen2?team1Name=${team1}&team2Name=${team2}") {
                                         launchSingleTop = true
                                     }
                                 } catch (e: Exception) {
@@ -120,7 +120,7 @@ fun StartAMatchScreen(navController: NavHostController) {
                         }, 
                         shape = RoundedCornerShape(10.dp), 
                         colors = ButtonDefaults.buttonColors(PrimaryGreen), 
-                        modifier = Modifier.size(width = 150.dp , height = 50.dp)
+                        modifier = Modifier.size(120.dp, 50.dp)
                     ) {
                         Text("Next")
                     }
