@@ -1,58 +1,33 @@
 package com.example.khelo
 
-import android.graphics.Color
-import android.graphics.Color.BLUE
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.example.khelo.ui.theme.PrimaryGreen
+import androidx.compose.ui.graphics.Color
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StartAMatchScreen(navController: NavHostController) {
+fun StartAMatchScreen(
+    navController: NavHostController
+) {
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    var team1 by remember { mutableStateOf("") }
-    var team2 by remember { mutableStateOf("") }
+    // State for team names
+    var team1Name by remember { mutableStateOf("") }
+    var team2Name by remember { mutableStateOf("") }
     var groundName by remember { mutableStateOf("") }
     var overs by remember { mutableStateOf("") }
 
@@ -68,61 +43,126 @@ fun StartAMatchScreen(navController: NavHostController) {
                 )
             },
             bottomBar = { BottomNavigationBar(navController) }
-        ) { innerPadding ->
-            Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)){
-                OutlinedTextField(value = team1, onValueChange = {team1 = it} , modifier = Modifier.fillMaxWidth(.9f), colors = OutlinedTextFieldDefaults.colors(focusedLabelColor = PrimaryGreen), label = {Text("Home Team", modifier = Modifier
-                    .background(
-                        color = androidx.compose.ui.graphics.Color.White,
-                        shape = RectangleShape
-                    )
-                    .padding(horizontal = 10.dp))})
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Team Name Input
+                Text(
+                    text = "Enter Team Names",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = PrimaryGreen
+                )
 
-                Spacer(Modifier.padding(vertical = 10.dp))
-                OutlinedTextField(value = team2, onValueChange = {team2 = it} ,modifier = Modifier.fillMaxWidth(.9f),colors = OutlinedTextFieldDefaults.colors(focusedLabelColor = PrimaryGreen), label = {Text("Visitor Team", modifier = Modifier
-                    .background(
-                        color = androidx.compose.ui.graphics.Color.White,
-                        shape = RectangleShape
+                // Team 1 Name Input
+                OutlinedTextField(
+                    value = team1Name.trim(),
+                    onValueChange = { 
+                        team1Name = it.trim() 
+                    },
+                    label = { Text("Team 1 Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = PrimaryGreen,
+                        unfocusedBorderColor = PrimaryGreen
                     )
-                    .padding(horizontal = 10.dp))})
+                )
 
-                Spacer(Modifier.padding(vertical = 10.dp))
-                OutlinedTextField(value = groundName, onValueChange = {groundName = it} ,modifier = Modifier.fillMaxWidth(.9f),colors = OutlinedTextFieldDefaults.colors(focusedLabelColor = PrimaryGreen), label = {Text("Ground Name", modifier = Modifier
-                    .background(
-                        color = androidx.compose.ui.graphics.Color.White,
-                        shape = RectangleShape
+                // Team 2 Name Input
+                OutlinedTextField(
+                    value = team2Name.trim(),
+                    onValueChange = { 
+                        team2Name = it.trim() 
+                    },
+                    label = { Text("Team 2 Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = PrimaryGreen,
+                        unfocusedBorderColor = PrimaryGreen
                     )
-                    .padding(horizontal = 10.dp))})
+                )
 
-                Spacer(Modifier.padding(vertical = 10.dp))
-                OutlinedTextField(value = overs, onValueChange = {overs = it } ,modifier = Modifier.fillMaxWidth(.9f),colors = OutlinedTextFieldDefaults.colors(focusedLabelColor = PrimaryGreen), label = {Text("Overs Per Side", modifier = Modifier
-                    .background(
-                        color = androidx.compose.ui.graphics.Color.White,
-                        shape = RectangleShape
+                // Ground Details
+                Text(
+                    text = "Ground Details",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = PrimaryGreen,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+
+                // Ground Name Input
+                OutlinedTextField(
+                    value = groundName.trim(),
+                    onValueChange = { 
+                        groundName = it.trim() 
+                    },
+                    label = { Text("Ground Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = PrimaryGreen,
+                        unfocusedBorderColor = PrimaryGreen
                     )
-                    .padding(horizontal = 10.dp))})
+                )
 
-                Spacer(Modifier.padding(vertical = 10.dp))
-                Row(horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth(.9f)){
-                    Button(
+                // Overs Per Side Input
+                OutlinedTextField(
+                    value = overs.trim(),
+                    onValueChange = { 
+                        overs = it.trim() 
+                    },
+                    label = { Text("Overs Per Side") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = PrimaryGreen,
+                        unfocusedBorderColor = PrimaryGreen
+                    )
+                )
+
+                // Action Buttons
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 32.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    OutlinedButton(
+                        onClick = { 
+                            navController.navigateUp() 
+                        },
+                        border = BorderStroke(1.dp, PrimaryGreen),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = PrimaryGreen
+                        ),
+                    ){
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Text("Back", fontWeight = FontWeight.Medium)
+                    }
+
+                    OutlinedButton(
                         onClick = {
-                            if (team1.isNotBlank() && team2.isNotBlank() && groundName.isNotBlank() && overs.isNotBlank()) {
-                                try {
-                                    navController.navigate(StartAMatchScreen2.route) {
-                                        launchSingleTop = true
-                                    }
-                                } catch (e: Exception) {
-                                    println("Navigation error: ${e.message}")
+                            if (team1Name.isNotBlank() && team2Name.isNotBlank() && 
+                                groundName.isNotBlank() && overs.isNotBlank()) {
+                                navController.navigate("StartAMatchScreen2?team1Name=${team1Name}&team2Name=${team2Name}") {
+                                    launchSingleTop = true
                                 }
                             }
-                        }, 
-                        shape = RoundedCornerShape(10.dp), 
-                        colors = ButtonDefaults.buttonColors(PrimaryGreen), 
-                        modifier = Modifier.size(width = 150.dp , height = 50.dp)
+                        },
+                        border = BorderStroke(1.dp, PrimaryGreen),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Color.White,
+                            containerColor = PrimaryGreen
+                        ),
                     ) {
-                        Text("Next")
+                        Text("Next", fontWeight = FontWeight.Medium)
                     }
                 }
             }
