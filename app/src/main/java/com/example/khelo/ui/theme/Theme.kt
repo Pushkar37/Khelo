@@ -16,7 +16,7 @@ private val DarkColorScheme = darkColorScheme(
     secondary = SecondaryGreen,
     tertiary = SuccessGreenDark,
     background = TextPrimary,
-    surface = TextPrimary,
+    surface = SecondaryGreen.copy(alpha = .2f),
     onPrimary = CardBackground,
     onSecondary = CardBackground,
     onTertiary = CardBackground,

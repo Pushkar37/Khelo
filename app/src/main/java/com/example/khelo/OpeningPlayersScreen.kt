@@ -233,7 +233,7 @@ fun DropdownMenu(
     expanded: Boolean = false,
     onExpandedChange: (Boolean) -> Unit = {}
 ) {
-    var expanded by remember { mutableStateOf(expanded) }
+    var isExpanded by remember { mutableStateOf(expanded) }
     
     Box(
         modifier = Modifier
@@ -254,21 +254,21 @@ fun DropdownMenu(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable {
-                    expanded = !expanded
-                    onExpandedChange(expanded)
+                    isExpanded = !isExpanded
+                    onExpandedChange(isExpanded)
                 }
         )
 
         DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false }
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }
         ) {
             items.forEach { item ->
                 DropdownMenuItem(
                     text = { Text(item) },
                     onClick = {
                         onItemSelected(item)
-                        expanded = false
+                        isExpanded = false
                     }
                 )
             }

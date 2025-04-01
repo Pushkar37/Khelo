@@ -15,12 +15,28 @@ import com.example.khelo.ui.theme.PrimaryGreen
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.khelo.data.storage.LocalStorage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StartAMatchScreen(
     navController: NavHostController
 ) {
+    val context = LocalContext.current
+    val localStorage = LocalStorage.getInstance(context)
+    
+    // Check if user is logged in
+    LaunchedEffect(Unit) {
+        if (!localStorage.isLoggedIn()) {
+            navController.navigate("login") {
+                popUpTo("StartAMatchScreen") { inclusive = true }
+            }
+        }
+    }
+    
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -30,6 +46,10 @@ fun StartAMatchScreen(
     var team2Name by remember { mutableStateOf("") }
     var groundName by remember { mutableStateOf("") }
     var overs by remember { mutableStateOf("") }
+    
+    // Error state
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isCreatingMatch by remember { mutableStateOf(false) }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -61,13 +81,13 @@ fun StartAMatchScreen(
 
                 // Team 1 Name Input
                 OutlinedTextField(
-                    value = team1Name.trim(),
+                    value = team1Name,
                     onValueChange = { 
                         team1Name = it.trim() 
                     },
                     label = { Text("Team 1 Name") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryGreen,
                         unfocusedBorderColor = PrimaryGreen
                     )
@@ -75,13 +95,13 @@ fun StartAMatchScreen(
 
                 // Team 2 Name Input
                 OutlinedTextField(
-                    value = team2Name.trim(),
+                    value = team2Name,
                     onValueChange = { 
                         team2Name = it.trim() 
                     },
                     label = { Text("Team 2 Name") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryGreen,
                         unfocusedBorderColor = PrimaryGreen
                     )
@@ -97,13 +117,13 @@ fun StartAMatchScreen(
 
                 // Ground Name Input
                 OutlinedTextField(
-                    value = groundName.trim(),
+                    value = groundName,
                     onValueChange = { 
                         groundName = it.trim() 
                     },
                     label = { Text("Ground Name") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryGreen,
                         unfocusedBorderColor = PrimaryGreen
                     )
@@ -111,17 +131,26 @@ fun StartAMatchScreen(
 
                 // Overs Per Side Input
                 OutlinedTextField(
-                    value = overs.trim(),
+                    value = overs,
                     onValueChange = { 
                         overs = it.trim() 
                     },
                     label = { Text("Overs Per Side") },
                     modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                    colors = OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = PrimaryGreen,
                         unfocusedBorderColor = PrimaryGreen
                     )
                 )
+                
+                // Error Message
+                errorMessage?.let {
+                    Text(
+                        text = it,
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
 
                 // Action Buttons
                 Row(
@@ -149,11 +178,45 @@ fun StartAMatchScreen(
 
                     OutlinedButton(
                         onClick = {
-                            if (team1Name.isNotBlank() && team2Name.isNotBlank() && 
-                                groundName.isNotBlank() && overs.isNotBlank()) {
-                                navController.navigate("StartAMatchScreen2?team1Name=${team1Name}&team2Name=${team2Name}") {
-                                    launchSingleTop = true
+                            // Validate inputs
+                            if (team1Name.isBlank()) {
+                                errorMessage = "Please enter Team 1 name"
+                                return@OutlinedButton
+                            }
+                            
+                            if (team2Name.isBlank()) {
+                                errorMessage = "Please enter Team 2 name"
+                                return@OutlinedButton
+                            }
+                            
+                            if (groundName.isBlank()) {
+                                errorMessage = "Please enter Ground name"
+                                return@OutlinedButton
+                            }
+                            
+                            if (overs.isBlank()) {
+                                errorMessage = "Please enter number of overs"
+                                return@OutlinedButton
+                            }
+                            
+                            try {
+                                val oversValue = overs.toFloat()
+                                if (oversValue <= 0) {
+                                    errorMessage = "Overs must be greater than 0"
+                                    return@OutlinedButton
                                 }
+                            } catch (e: NumberFormatException) {
+                                errorMessage = "Please enter a valid number for overs"
+                                return@OutlinedButton
+                            }
+                            
+                            // Proceed with match creation
+                            isCreatingMatch = true
+                            errorMessage = null
+                            
+                            // Navigate to next screen
+                            navController.navigate("StartAMatchScreen2?team1Name=${team1Name}&team2Name=${team2Name}") {
+                                launchSingleTop = true
                             }
                         },
                         border = BorderStroke(1.dp, PrimaryGreen),
@@ -161,11 +224,25 @@ fun StartAMatchScreen(
                             contentColor = Color.White,
                             containerColor = PrimaryGreen
                         ),
+                        enabled = !isCreatingMatch
                     ) {
-                        Text("Next", fontWeight = FontWeight.Medium)
+                        if (isCreatingMatch) {
+                            CircularProgressIndicator(
+                                color = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        } else {
+                            Text("Next", fontWeight = FontWeight.Medium)
+                        }
                     }
                 }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun StartAMatchScreenPreview() {
+    StartAMatchScreen(navController = rememberNavController())
 }

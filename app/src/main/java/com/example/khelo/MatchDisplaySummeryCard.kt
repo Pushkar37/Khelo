@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.Build
+//import androidx.compose.material.icons.filled.SportsCricket
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,38 +24,140 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.khelo.ui.theme.PrimaryGreen
 import com.example.khelo.ui.theme.SecondaryGreen
 
-@Preview
 @Composable
-fun MatchDisplaySummeryCard(){
-    Card(onClick = {}, modifier = Modifier.padding(horizontal = 10.dp).size(300.dp,185.dp) , elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
-        Column (modifier = Modifier.background(SecondaryGreen.copy(0.5f)).fillMaxSize()){
-            Row (verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceBetween , modifier = Modifier
-                .padding(10.dp)
-                .fillMaxWidth()){
+fun MatchDisplaySummeryCard(
+    team1Name: String = "Team 1",
+    team2Name: String = "Team 2",
+    team1Score: String = "0/0",
+    team2Score: String = "0/0",
+    overs: String = "0.0",
+    onClick: () -> Unit = {}
+) {
+    Card(
+        onClick = onClick, 
+        modifier = Modifier
+            .padding(horizontal = 10.dp)
+            .size(300.dp, 185.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 4.dp,
+            pressedElevation = 0.dp
+        )
+    ) {
+        Column(
+            modifier = Modifier
+                .background(SecondaryGreen.copy(0.2f))
+                .fillMaxSize()
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth()
+            ) {
                 Column {
-                    Text("Match Name", fontSize = 15.sp , fontWeight = FontWeight.Light)
-                    Text("Location", fontSize = 15.sp , fontWeight = FontWeight.Light)
+                    Text(
+                        "$team1Name vs $team2Name",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        "Overs: $overs",
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Light
+                    )
                 }
-                Icon(imageVector = Icons.Outlined.Notifications, contentDescription = "" , modifier = Modifier.clickable(onClick = {}))
+                Icon(
+//                    imageVector = Icons.Filled.SportsCricket,
+                    imageVector = Icons.Filled.Build,
+                    contentDescription = "Cricket Match",
+                    tint = PrimaryGreen
+                )
             }
 
-            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(10.dp)){
-                Icon(Icons.Default.AccountCircle, contentDescription = "")
-                Text("Team 1" , modifier = Modifier.padding(horizontal = 10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                Icon(
+                    Icons.Default.AccountCircle,
+                    contentDescription = "",
+                    tint = PrimaryGreen
+                )
+                Column(
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                ) {
+                    Text(
+                        team1Name,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        team1Score,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryGreen
+                    )
+                }
             }
-            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(10.dp)){
-                Icon(Icons.Default.AccountCircle, contentDescription = "")
-                Text("Team 1" , modifier = Modifier.padding(horizontal = 10.dp))
+            
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+            ) {
+                Icon(
+                    Icons.Default.AccountCircle,
+                    contentDescription = "",
+                    tint = PrimaryGreen
+                )
+                Column(
+                    modifier = Modifier.padding(horizontal = 10.dp)
+                ) {
+                    Text(
+                        team2Name,
+                        fontWeight = FontWeight.Medium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        team2Score,
+                        fontWeight = FontWeight.Bold,
+                        color = PrimaryGreen
+                    )
+                }
             }
+            
             HorizontalDivider()
+            
             Row {
-                Text("Highlight / Summary" , modifier = Modifier.padding(10.dp))
+                Text(
+                    "Live Match",
+                    modifier = Modifier.padding(10.dp),
+                    color = PrimaryGreen,
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun MatchDisplaySummeryCardPreview() {
+    MatchDisplaySummeryCard(
+        team1Name = "Mumbai Indians",
+        team2Name = "Chennai Super Kings",
+        team1Score = "120/4",
+        team2Score = "0/0",
+        overs = "15.2"
+    )
 }
