@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.sp
 fun StartAMatchScreen2(
     navController: NavHostController,
     team1Name: String,
-    team2Name: String
+    team2Name: String,
+    totalOvers: String
 ) {
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -264,7 +265,7 @@ fun StartAMatchScreen2(
                         onClick = {
                             if ((enteredItems["team1Players"] ?: emptyList()).isNotEmpty() &&
                                 (enteredItems["team2Players"] ?: emptyList()).isNotEmpty()) {
-                                navController.navigate("TossAndPlaying11Screen?team1Players=${(enteredItems["team1Players"] ?: emptyList()).joinToString(",")}&team2Players=${(enteredItems["team2Players"] ?: emptyList()).joinToString(",")}&team1Name=${team1Name}&team2Name=${team2Name}") {
+                                navController.navigate("TossAndPlaying11Screen?team1Players=${(enteredItems["team1Players"] ?: emptyList()).joinToString(",")}&team2Players=${(enteredItems["team2Players"] ?: emptyList()).joinToString(",")}&team1Name=${team1Name}&team2Name=${team2Name}&totalOvers=${totalOvers}") {
                                     launchSingleTop = true
                                 }
                             }

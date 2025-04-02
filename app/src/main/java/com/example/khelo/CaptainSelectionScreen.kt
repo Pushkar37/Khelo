@@ -24,7 +24,8 @@ fun CaptainSelectionScreen(
     team1Name: String? = null,
     team2Name: String? = null,
     tossWinner: String? = null,
-    tossDecision: String? = null
+    tossDecision: String? = null,
+    totalOvers: String? = null
 ) {
     // Use safe defaults for team names
     val team1NameSafe = team1Name ?: "Team 1"
@@ -88,6 +89,10 @@ fun CaptainSelectionScreen(
                             onClick = {
                                 team1Captain = player
                                 team1CaptainExpanded = false
+                                // If vice-captain is the same as the new captain, clear vice-captain
+                                if (team1ViceCaptain == player) {
+                                    team1ViceCaptain = ""
+                                }
                             },
                             colors = MenuItemColors(
                                 textColor = if (team1Captain == player) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
@@ -130,7 +135,7 @@ fun CaptainSelectionScreen(
                     onDismissRequest = { team1ViceCaptainExpanded = false }
                 ) {
                     team1Players
-                        .filter { it != team1Captain }
+                        .filter { it != team1Captain } // Filter out the captain
                         .forEach { player ->
                             DropdownMenuItem(
                                 text = { Text(player) },
@@ -184,6 +189,10 @@ fun CaptainSelectionScreen(
                             onClick = {
                                 team2Captain = player
                                 team2CaptainExpanded = false
+                                // If vice-captain is the same as the new captain, clear vice-captain
+                                if (team2ViceCaptain == player) {
+                                    team2ViceCaptain = ""
+                                }
                             },
                             colors = MenuItemColors(
                                 textColor = if (team2Captain == player) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
@@ -226,7 +235,7 @@ fun CaptainSelectionScreen(
                     onDismissRequest = { team2ViceCaptainExpanded = false }
                 ) {
                     team2Players
-                        .filter { it != team2Captain }
+                        .filter { it != team2Captain } // Filter out the captain
                         .forEach { player ->
                             DropdownMenuItem(
                                 text = { Text(player) },
@@ -254,14 +263,15 @@ fun CaptainSelectionScreen(
                 onClick = {
                     if (team1Captain.isNotBlank() && team1ViceCaptain.isNotBlank() &&
                         team2Captain.isNotBlank() && team2ViceCaptain.isNotBlank()) {
-                        // Navigate to the next screen with all the match information
+                        // Navigate to LineupSelectionScreen with selected captains
                         navController.navigate(
                             "LineupSelectionScreen?team1Players=${team1Players.joinToString(",")}" +
                             "&team2Players=${team2Players.joinToString(",")}" +
-                            "&team1Name=${team1NameSafe}&team2Name=${team2NameSafe}" +
-                            "&tossWinner=${tossWinner ?: ""}&tossDecision=${tossDecision ?: ""}" +
-                            "&team1Captain=${team1Captain}&team1ViceCaptain=${team1ViceCaptain}" +
-                            "&team2Captain=${team2Captain}&team2ViceCaptain=${team2ViceCaptain}"
+                            "&team1Name=$team1NameSafe&team2Name=$team2NameSafe" +
+                            "&tossWinner=$tossWinner&tossDecision=$tossDecision" +
+                            "&team1Captain=$team1Captain&team1ViceCaptain=$team1ViceCaptain" +
+                            "&team2Captain=$team2Captain&team2ViceCaptain=$team2ViceCaptain" +
+                            "&totalOvers=${totalOvers ?: "20"}"
                         )
                     }
                 },

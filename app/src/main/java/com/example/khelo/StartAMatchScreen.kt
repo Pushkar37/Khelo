@@ -215,7 +215,7 @@ fun StartAMatchScreen(
                             errorMessage = null
                             
                             // Navigate to next screen
-                            navController.navigate("StartAMatchScreen2?team1Name=${team1Name}&team2Name=${team2Name}") {
+                            navController.navigate("StartAMatchScreen2?team1Name=${team1Name}&team2Name=${team2Name}&totalOvers=${overs}") {
                                 launchSingleTop = true
                             }
                         },

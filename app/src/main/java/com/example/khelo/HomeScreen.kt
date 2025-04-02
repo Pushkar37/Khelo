@@ -169,6 +169,81 @@ fun HomeScreen(navController: NavHostController) {
                 Row(modifier = Modifier.padding(16.dp)) {
                     Text("Articles", fontSize = 20.sp)
                 }
+                
+                // Dummy Articles
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    ArticleCard(
+                        title = "IPL 2025: Top 5 Batsmen to Watch",
+                        summary = "With the IPL 2025 season approaching, here are the top batsmen who could make a big impact this year.",
+                        date = "April 1, 2025",
+                        imageUrl = null
+                    )
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    ArticleCard(
+                        title = "India's New Bowling Sensation Takes 5 Wickets on Debut",
+                        summary = "The young fast bowler impressed everyone with his pace and accuracy in his first international match.",
+                        date = "March 28, 2025",
+                        imageUrl = null
+                    )
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    ArticleCard(
+                        title = "Cricket World Cup 2026: Host Nations Announced",
+                        summary = "ICC has announced the host nations for the upcoming Cricket World Cup scheduled for 2026.",
+                        date = "March 25, 2025",
+                        imageUrl = null
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Row(modifier = Modifier.padding(16.dp)) {
+                    Text("Matches", fontSize = 20.sp)
+                }
+                
+                // Dummy Matches
+                Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+                    MatchDisplaySummeryCard(
+                        team1Name = "India",
+                        team2Name = "Australia",
+                        team1Score = "287/6",
+                        team2Score = "192/4",
+                        overs = "42.3",
+                        onClick = { /* No action */ }
+                    )
+                    
+                    MatchDisplaySummeryCard(
+                        team1Name = "England",
+                        team2Name = "South Africa",
+                        team1Score = "325/8",
+                        team2Score = "201/10",
+                        overs = "50.0",
+                        onClick = { /* No action */ }
+                    )
+                    
+                    MatchDisplaySummeryCard(
+                        team1Name = "New Zealand",
+                        team2Name = "Pakistan",
+                        team1Score = "156/3",
+                        team2Score = "155/10",
+                        overs = "32.4",
+                        onClick = { /* No action */ }
+                    )
+                    
+                    MatchDisplaySummeryCard(
+                        team1Name = "West Indies",
+                        team2Name = "Sri Lanka",
+                        team1Score = "203/7",
+                        team2Score = "189/9",
+                        overs = "50.0",
+                        onClick = { /* No action */ }
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(24.dp))
             }
         }
     }

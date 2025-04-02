@@ -27,7 +27,8 @@ fun LineupSelectionScreen(
     team1Captain: String? = null,
     team1ViceCaptain: String? = null,
     team2Captain: String? = null,
-    team2ViceCaptain: String? = null
+    team2ViceCaptain: String? = null,
+    totalOvers: String? = null
 ) {
     // Use safe defaults for team names
     val team1NameSafe = team1Name ?: "Team 1"
@@ -105,6 +106,10 @@ fun LineupSelectionScreen(
                             onClick = {
                                 batsman1 = player
                                 batsman1Expanded = false
+                                // If batsman2 is the same as the new batsman1, clear batsman2
+                                if (batsman2 == player) {
+                                    batsman2 = ""
+                                }
                             }
                         )
                     }
@@ -134,7 +139,7 @@ fun LineupSelectionScreen(
                     onDismissRequest = { batsman2Expanded = false }
                 ) {
                     battingTeamPlayers
-                        .filter { it != batsman1 }
+                        .filter { it != batsman1 } // Filter out the first batsman
                         .forEach { player ->
                             DropdownMenuItem(
                                 text = { Text(player) },
@@ -176,15 +181,17 @@ fun LineupSelectionScreen(
                     expanded = bowlerExpanded,
                     onDismissRequest = { bowlerExpanded = false }
                 ) {
-                    bowlingTeamPlayers.forEach { player ->
-                        DropdownMenuItem(
-                            text = { Text(player) },
-                            onClick = {
-                                bowler = player
-                                bowlerExpanded = false
-                            }
-                        )
-                    }
+                    bowlingTeamPlayers
+                        .filter { it != wicketkeeper || wicketkeeper.isEmpty() } // Allow wicketkeeper to bowl only if not yet selected
+                        .forEach { player ->
+                            DropdownMenuItem(
+                                text = { Text(player) },
+                                onClick = {
+                                    bowler = player
+                                    bowlerExpanded = false
+                                }
+                            )
+                        }
                 }
             }
             
@@ -215,15 +222,17 @@ fun LineupSelectionScreen(
                     expanded = wicketkeeperExpanded,
                     onDismissRequest = { wicketkeeperExpanded = false }
                 ) {
-                    bowlingTeamPlayers.forEach { player ->
-                        DropdownMenuItem(
-                            text = { Text(player) },
-                            onClick = {
-                                wicketkeeper = player
-                                wicketkeeperExpanded = false
-                            }
-                        )
-                    }
+                    bowlingTeamPlayers
+                        .filter { it != bowler || bowler.isEmpty() } // Allow bowler to be wicketkeeper only if not yet selected
+                        .forEach { player ->
+                            DropdownMenuItem(
+                                text = { Text(player) },
+                                onClick = {
+                                    wicketkeeper = player
+                                    wicketkeeperExpanded = false
+                                }
+                            )
+                        }
                 }
             }
             
@@ -236,15 +245,16 @@ fun LineupSelectionScreen(
                         bowler.isNotBlank() && wicketkeeper.isNotBlank()) {
                         // Navigate to the scoring screen with all match information
                         navController.navigate(
-                            "ScoringScreen?team1Players=${team1Players.joinToString(",")}" +
+                            "ScoringScreen?team1Name=${team1NameSafe}&team2Name=${team2NameSafe}" +
+                            "&team1Players=${team1Players.joinToString(",")}" +
                             "&team2Players=${team2Players.joinToString(",")}" +
-                            "&team1Name=${team1NameSafe}&team2Name=${team2NameSafe}" +
                             "&tossWinner=${tossWinner ?: ""}&tossDecision=${tossDecision ?: ""}" +
                             "&team1Captain=${team1Captain ?: ""}&team1ViceCaptain=${team1ViceCaptain ?: ""}" +
                             "&team2Captain=${team2Captain ?: ""}&team2ViceCaptain=${team2ViceCaptain ?: ""}" +
-                            "&batsman1=${batsman1}&batsman2=${batsman2}" +
+                            "&striker=${batsman1}&nonStriker=${batsman2}" +
                             "&bowler=${bowler}&wicketkeeper=${wicketkeeper}" +
-                            "&battingTeam=${battingTeamName}&bowlingTeam=${bowlingTeamName}"
+                            "&battingTeamName=${battingTeamName}&bowlingTeamName=${bowlingTeamName}" +
+                            "&totalOvers=${totalOvers ?: "20"}"
                         )
                     }
                 },

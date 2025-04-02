@@ -27,7 +27,8 @@ fun TossAndPlaying11Screen(
     team1Players: List<String>,
     team2Players: List<String>,
     team1Name: String,
-    team2Name: String
+    team2Name: String,
+    totalOvers: String
 ) {
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -63,7 +64,7 @@ fun TossAndPlaying11Screen(
                             selectedTeam1Players = team1Selected
                             selectedTeam2Players = team2Selected
                             showBottomSheet = false
-                            navController.navigate("CaptainSelectionScreen?team1Players=${team1Selected.joinToString(",")}&team2Players=${team2Selected.joinToString(",")}&team1Name=${team1Name}&team2Name=${team2Name}&tossWinner=${tossWinner}&tossDecision=${tossDecision}")
+                            navController.navigate("CaptainSelectionScreen?team1Players=${team1Selected.joinToString(",")}&team2Players=${team2Selected.joinToString(",")}&team1Name=${team1Name}&team2Name=${team2Name}&tossWinner=${tossWinner}&tossDecision=${tossDecision}&totalOvers=${totalOvers}")
                         }
                     )
                 }
@@ -294,7 +295,7 @@ fun TossAndPlaying11Screen(
                             selectedTeam1Players.size == 11 && selectedTeam2Players.size == 11) {
                             // Navigate to CaptainSelectionScreen with selected players
                             navController.navigate(
-                                "CaptainSelectionScreen?team1Players=${selectedTeam1Players.joinToString(",")}&team2Players=${selectedTeam2Players.joinToString(",")}&team1Name=$team1Name&team2Name=$team2Name&tossWinner=$tossWinner&tossDecision=$tossDecision"
+                                "CaptainSelectionScreen?team1Players=${selectedTeam1Players.joinToString(",")}&team2Players=${selectedTeam2Players.joinToString(",")}&team1Name=$team1Name&team2Name=$team2Name&tossWinner=$tossWinner&tossDecision=$tossDecision&totalOvers=$totalOvers"
                             )
                         }
                     },
