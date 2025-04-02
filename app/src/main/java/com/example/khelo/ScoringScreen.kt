@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -81,6 +82,8 @@ fun ScoringScreen(
             totalOvers = totalOvers
         )
     }
+
+    var maxBalls by rememberSaveable { mutableIntStateOf(6) }
     
     // Provide the ScoringScreenState to the CompositionLocal
     CompositionLocalProvider(LocalScoringScreenState provides scoringScreenState) {
@@ -453,8 +456,6 @@ fun ScoringScreen(
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ){
 
-                var maxBalls = 6;
-
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -620,20 +621,57 @@ fun ScoringScreen(
                     )
                     Text("Wicket")
                 }
-                
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = scoringScreenState.isRunOut,
-                        onCheckedChange = {
-                            scoringScreenState.isRunOut = it
-                            if (it) {
-                                scoringScreenState.isWicket = true
-                            }
-                        },
-                        enabled = scoringScreenState.isWicket
+
+                Spacer(modifier = Modifier.width(16.dp))
+
+                // Retire button
+                OutlinedButton(
+                    onClick = {
+                        // Show dialog to select which batsman to retire
+                        scoringScreenState.showRetireBatsmanDialog = true
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF1B5E20)
                     )
-                    Text("Run Out")
+                ) {
+                    Text("Retire")
                 }
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Swap batsmen button
+                OutlinedButton(
+                    onClick = {
+                        // Swap striker and non-striker
+                        val temp = scoringScreenState.striker
+                        scoringScreenState.striker = scoringScreenState.nonStriker
+                        scoringScreenState.nonStriker = temp
+
+                        val tempRuns = scoringScreenState.strikerRuns
+                        scoringScreenState.strikerRuns = scoringScreenState.nonStrikerRuns
+                        scoringScreenState.nonStrikerRuns = tempRuns
+
+                        val tempBalls = scoringScreenState.strikerBalls
+                        scoringScreenState.strikerBalls = scoringScreenState.nonStrikerBalls
+                        scoringScreenState.nonStrikerBalls = tempBalls
+
+                        val tempFours = scoringScreenState.strikerFours
+                        scoringScreenState.strikerFours = scoringScreenState.nonStrikerFours
+                        scoringScreenState.nonStrikerFours = tempFours
+
+                        val tempSixes = scoringScreenState.strikerSixes
+                        scoringScreenState.strikerSixes = scoringScreenState.nonStrikerSixes
+                        scoringScreenState.nonStrikerSixes = tempSixes
+                    },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        contentColor = Color(0xFF1B5E20)
+                    )
+                ) {
+                    Text("Swap Batsman")
+                }
+
             }
             
             // Wicket type dialog
@@ -877,71 +915,6 @@ fun ScoringScreen(
                         }
                     }
                 )
-            }
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = scoringScreenState.isWicket,
-                        onCheckedChange = { scoringScreenState.isWicket = it }
-                    )
-                    Text("Wicket")
-                }
-                
-                Spacer(modifier = Modifier.width(16.dp))
-                
-                // Retire button
-                OutlinedButton(
-                    onClick = {
-                        // Show dialog to select which batsman to retire
-                        scoringScreenState.showRetireBatsmanDialog = true
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFF1B5E20)
-                    )
-                ) {
-                    Text("Retire")
-                }
-                
-                Spacer(modifier = Modifier.width(8.dp))
-                
-                // Swap batsmen button
-                OutlinedButton(
-                    onClick = {
-                        // Swap striker and non-striker
-                        val temp = scoringScreenState.striker
-                        scoringScreenState.striker = scoringScreenState.nonStriker
-                        scoringScreenState.nonStriker = temp
-                        
-                        val tempRuns = scoringScreenState.strikerRuns
-                        scoringScreenState.strikerRuns = scoringScreenState.nonStrikerRuns
-                        scoringScreenState.nonStrikerRuns = tempRuns
-                        
-                        val tempBalls = scoringScreenState.strikerBalls
-                        scoringScreenState.strikerBalls = scoringScreenState.nonStrikerBalls
-                        scoringScreenState.nonStrikerBalls = tempBalls
-                        
-                        val tempFours = scoringScreenState.strikerFours
-                        scoringScreenState.strikerFours = scoringScreenState.nonStrikerFours
-                        scoringScreenState.nonStrikerFours = tempFours
-                        
-                        val tempSixes = scoringScreenState.strikerSixes
-                        scoringScreenState.strikerSixes = scoringScreenState.nonStrikerSixes
-                        scoringScreenState.nonStrikerSixes = tempSixes
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.outlinedButtonColors(
-                        contentColor = Color(0xFF1B5E20)
-                    )
-                ) {
-                    Text("Swap Batsman")
-                }
             }
             
             // Action buttons
