@@ -338,8 +338,14 @@ class ScoringScreenState(
     
     // Calculate projected score
     fun getProjectedScore(): Int {
+        if (totalOvers <= 0) return totalRuns
+        
         val currentRunRate = getRunRate()
         val remainingOvers = totalOvers - completedOvers - (currentBalls / 6.0f)
+        
+        // Check if we have remaining overs
+        if (remainingOvers <= 0) return totalRuns
+        
         val projectedAdditionalRuns = (currentRunRate * remainingOvers).toInt()
         return totalRuns + projectedAdditionalRuns
     }
@@ -581,7 +587,7 @@ class ScoringScreenState(
             showInningsCompleteDialog = true
         }
         // Check if second innings is complete (all out, completed overs, or target achieved)
-        else if (currentInnings == 2 && (totalWickets >= 10 || completedOvers >= totalOvers || totalRuns > target)) {
+        else if (currentInnings == 2 && (totalWickets >= 10 || completedOvers >= totalOvers || totalRuns >= target)) {
             showMatchCompleteDialog = true
         }
     }

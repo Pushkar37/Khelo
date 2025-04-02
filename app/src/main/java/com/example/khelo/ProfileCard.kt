@@ -13,7 +13,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,22 +23,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.example.khelo.data.model.Player
+import com.example.khelo.data.model.User
 import com.example.khelo.ui.theme.SecondaryGreen
 
 @Composable
-fun ProfileCard(){
-    Card(onClick = {}, modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
+fun ProfileCard(user: User, player: Player?, navController: NavHostController){
+    Card(onClick = {navController.navigate("profile")}, modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
         Column (modifier = Modifier.background(color = SecondaryGreen)){
             Row (verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceEvenly , modifier = Modifier.padding(10.dp)){
-                Image(painterResource(R.drawable.ic_launcher_foreground), contentDescription = "" ,
+                Image(painterResource(R.drawable.default_profile_image), contentDescription = "" ,
                     modifier = Modifier
                         .border(width = 2.dp, color = Color.Gray, shape = CircleShape)
                         .clip(CircleShape)
                         .size(60.dp))
                 Column(modifier = Modifier.padding(horizontal = 10.dp)){
-                    Text("Player Name", fontSize = 25.sp)
-                    Text("Player id")
-                    Text("Number")
+                    Text(user.name, fontSize = 25.sp)
+                    Text(user.phoneNumber)
+                    Text(user.email)
                 }
             }
             HorizontalDivider()
@@ -80,5 +82,5 @@ fun ProfileCard(){
 @Preview
 @Composable
 fun PreviewProfileCard(){
-    ProfileCard()
+//    ProfileCard()
 }

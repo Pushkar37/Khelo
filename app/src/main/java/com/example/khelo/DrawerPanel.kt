@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -41,15 +42,23 @@ import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.khelo.data.model.Player
+import com.example.khelo.data.storage.LocalStorage
 import com.example.khelo.ui.theme.PrimaryGreen
 import com.example.khelo.ui.theme.SecondaryGreen
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +67,33 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemClick: (String) -> Unit) {
+
+    val context = LocalContext.current
+    val localStorage = LocalStorage.getInstance(context)
+
+    // Get current user and player data
+    val currentUser = localStorage.getCurrentUser()
+    var player by remember { mutableStateOf<Player?>(null) }
+
+
+    // Load player data
+    LaunchedEffect(currentUser) {
+        currentUser?.let {
+            player = localStorage.getPlayerByPhone(it.phoneNumber)
+        }
+    }
+
+    // Check if user is logged in
+    if (currentUser == null) {
+        // Redirect to login if not logged in
+        LaunchedEffect(Unit) {
+            navController.navigate("login") {
+                popUpTo("profile") { inclusive = true }
+            }
+        }
+        return
+    }
+
     ModalDrawerSheet {
         Column(
             modifier = Modifier
@@ -69,7 +105,11 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
         ) {
             Spacer(Modifier.height(12.dp))
             Text("Drawer Title", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
-            ProfileCard()
+            ProfileCard(
+                user = currentUser,
+                player = player,
+                navController
+            )
 
             Text("Host", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
             NavigationDrawerItem(
@@ -177,9 +217,10 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
 }
 
 @Composable
-fun TopAppBar( drawerState: DrawerState, scope: CoroutineScope){
+fun TopAppBar(drawerState: DrawerState, scope: CoroutineScope, navController: NavHostController){
     Card(shape = RectangleShape, elevation = CardDefaults.cardElevation(defaultElevation = 50.dp),
         modifier = Modifier
+            .wrapContentHeight()
             .fillMaxWidth()
             .shadow(10.dp, ambientColor = Color.Black, spotColor = Color.Black)
             .background(SecondaryGreen)
@@ -189,7 +230,7 @@ fun TopAppBar( drawerState: DrawerState, scope: CoroutineScope){
         Row(
             modifier = Modifier
                 .background(SecondaryGreen)
-                .padding(10.dp)
+                .padding(horizontal = 10.dp, vertical = 4.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
@@ -210,7 +251,7 @@ fun TopAppBar( drawerState: DrawerState, scope: CoroutineScope){
                     .size(40.dp)
             )
             Text(
-                text = "Khelo",
+                text = "Kheloo",
                 fontWeight = FontWeight.Medium,
                 fontSize = 30.sp,
                 modifier = Modifier
@@ -221,6 +262,7 @@ fun TopAppBar( drawerState: DrawerState, scope: CoroutineScope){
                 imageVector = Icons.Default.Person,
                 contentDescription = "person image",
                 Modifier.size(35.dp)
+                    .clickable(onClick = { navController.navigate("profile") },)
             )
         }
     }
@@ -263,7 +305,11 @@ fun BottomNavigationBar(navController: NavHostController) {
                     }
                     )
             )
-            Icon(Icons.Default.AccountCircle, contentDescription = "Add icon")
+            Icon(Icons.Default.AccountCircle, contentDescription = "Add icon",
+                modifier = Modifier
+                    .clickable(
+                        onClick = { navController.navigate("profile") },))
+
             Icon(Icons.Default.ShoppingCart, contentDescription = "Shopping Cart",
                 modifier = Modifier
                     .clickable(onClick = {

@@ -133,7 +133,7 @@ fun ScoringScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "${scoringScreenState.battingTeamName}",
+                            text = scoringScreenState.battingTeamName,
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold
                         )
@@ -203,7 +203,8 @@ fun ScoringScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(8.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
                 Column(
@@ -252,7 +253,7 @@ fun ScoringScreen(
                             textAlign = TextAlign.Center
                         )
                     }
-                    
+
                     Divider(modifier = Modifier.padding(vertical = 4.dp))
                     
                     // Striker row
@@ -447,9 +448,13 @@ fun ScoringScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp),
+                    .padding(8.dp),
+                elevation = CardDefaults.cardElevation(4.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
+            ){
+
+                var maxBalls = 6;
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -475,10 +480,11 @@ fun ScoringScreen(
                                     .background(
                                         when {
                                             event == "W" -> Color.Red
-                                            event == "Wd" || event == "Nb" -> Color(0xFFFF9800) // Orange
+                                            event == "Wd" || event == "Nb" -> Color.Gray// Orange
                                             event == "0" -> Color.White
-                                            event.contains("b") || event.contains("lb") -> Color(0xFF4CAF50) // Green
-                                            event.toIntOrNull() == 4 || event.toIntOrNull() == 6 -> Color(0xFF4CAF50) // Green
+                                            event.contains("b") || event.contains("lb") -> Color.LightGray // Green
+                                            event.toIntOrNull() == 4 -> Color.Cyan
+                                            event.toIntOrNull() == 6 -> Color.Magenta // Green
                                             else -> Color(0xFF4CAF50) // Green for runs
                                         }
                                     )
@@ -489,6 +495,9 @@ fun ScoringScreen(
                                     ),
                                 contentAlignment = Alignment.Center
                             ) {
+                                if (event == "Wd" || event == "Nb"){
+                                    maxBalls++
+                                }
                                 Text(
                                     text = event,
                                     color = if (event == "0") Color.Black else Color.White,
@@ -499,7 +508,7 @@ fun ScoringScreen(
                         }
                         
                         // Add placeholder for remaining balls in over
-                        repeat(6 - scoringScreenState.currentOverEvents.size) {
+                        repeat(maxBalls - scoringScreenState.currentOverEvents.size) {
                             Box(
                                 modifier = Modifier
                                     .size(32.dp)
@@ -513,7 +522,7 @@ fun ScoringScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = "NB",
+                                    text = "",
                                     color = Color.Gray,
                                     style = MaterialTheme.typography.bodySmall
                                 )
@@ -542,7 +551,7 @@ fun ScoringScreen(
                     )
                     Text("Wide")
                 }
-                
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = scoringScreenState.isNoBall,
@@ -555,7 +564,7 @@ fun ScoringScreen(
                     )
                     Text("No Ball")
                 }
-                
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = scoringScreenState.isBye,
@@ -568,7 +577,7 @@ fun ScoringScreen(
                     )
                     Text("Byes")
                 }
-                
+
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = scoringScreenState.isLegBye,
@@ -581,6 +590,13 @@ fun ScoringScreen(
                     )
                     Text("Leg Byes")
                 }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ){
                 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(

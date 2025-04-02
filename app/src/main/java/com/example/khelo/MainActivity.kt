@@ -223,18 +223,18 @@ fun MainScreen() {
                 bowlingTeam = bowlingTeam
             )
         }
-        composable(
-            "liveScoring/{matchId}",
-            arguments = listOf(
-                navArgument("matchId") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val matchId = backStackEntry.arguments?.getString("matchId") ?: ""
-            LiveScoringScreen(
-                navController = navController,
-                matchId = matchId
-            )
-        }
+//        composable(
+//            "liveScoring/{matchId}",
+//            arguments = listOf(
+//                navArgument("matchId") { type = NavType.StringType }
+//            )
+//        ) { backStackEntry ->
+//            val matchId = backStackEntry.arguments?.getString("matchId") ?: ""
+//            LiveScoringScreen(
+//                navController = navController,
+//                matchId = matchId
+//            )
+//        }
         
         composable(
             route = "ScoringScreen?team1Name={team1Name}&team2Name={team2Name}&team1Players={team1Players}&team2Players={team2Players}&tossWinner={tossWinner}&tossDecision={tossDecision}&team1Captain={team1Captain}&team1ViceCaptain={team1ViceCaptain}&team2Captain={team2Captain}&team2ViceCaptain={team2ViceCaptain}&striker={striker}&nonStriker={nonStriker}&bowler={bowler}&wicketkeeper={wicketkeeper}&battingTeamName={battingTeamName}&bowlingTeamName={bowlingTeamName}&totalOvers={totalOvers}",

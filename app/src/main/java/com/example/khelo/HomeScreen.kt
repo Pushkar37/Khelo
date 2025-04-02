@@ -35,7 +35,6 @@ import com.example.khelo.data.model.Match
 import com.example.khelo.data.storage.LocalStorage
 import com.example.khelo.ui.theme.PrimaryGreen
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 
@@ -75,22 +74,11 @@ fun HomeScreen(navController: NavHostController) {
             topBar = {
                 TopAppBar(
                     drawerState,
-                    scope
+                    scope,
+                    navController
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) },
-            floatingActionButton = {
-                FloatingActionButton(
-                    onClick = { navController.navigate("profile") },
-                    containerColor = PrimaryGreen
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Person,
-                        contentDescription = "Profile",
-                        tint = androidx.compose.ui.graphics.Color.White
-                    )
-                }
-            }
+            bottomBar = { BottomNavigationBar(navController) }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -165,38 +153,6 @@ fun HomeScreen(navController: NavHostController) {
                         }
                     }
                 }
-
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Text("Articles", fontSize = 20.sp)
-                }
-                
-                // Dummy Articles
-                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-                    ArticleCard(
-                        title = "IPL 2025: Top 5 Batsmen to Watch",
-                        summary = "With the IPL 2025 season approaching, here are the top batsmen who could make a big impact this year.",
-                        date = "April 1, 2025",
-                        imageUrl = null
-                    )
-                    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    ArticleCard(
-                        title = "India's New Bowling Sensation Takes 5 Wickets on Debut",
-                        summary = "The young fast bowler impressed everyone with his pace and accuracy in his first international match.",
-                        date = "March 28, 2025",
-                        imageUrl = null
-                    )
-                    
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    ArticleCard(
-                        title = "Cricket World Cup 2026: Host Nations Announced",
-                        summary = "ICC has announced the host nations for the upcoming Cricket World Cup scheduled for 2026.",
-                        date = "March 25, 2025",
-                        imageUrl = null
-                    )
-                }
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
@@ -240,6 +196,39 @@ fun HomeScreen(navController: NavHostController) {
                         team2Score = "189/9",
                         overs = "50.0",
                         onClick = { /* No action */ }
+                    )
+                }
+
+                Row(modifier = Modifier.padding(16.dp)) {
+                    Text("Articles", fontSize = 20.sp)
+                }
+
+                // Dummy Articles
+
+                Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+                    ArticleCard(
+                        title = "IPL 2025: Top 5 Batsmen to Watch",
+                        summary = "With the IPL 2025 season approaching, here are the top batsmen who could make a big impact this year.",
+                        date = "April 1, 2025",
+                        imageUrl = null
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    ArticleCard(
+                        title = "India's New Bowling Sensation Takes 5 Wickets on Debut",
+                        summary = "The young fast bowler impressed everyone with his pace and accuracy in his first international match.",
+                        date = "March 28, 2025",
+                        imageUrl = null
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    ArticleCard(
+                        title = "Cricket World Cup 2026: Host Nations Announced",
+                        summary = "ICC has announced the host nations for the upcoming Cricket World Cup scheduled for 2026.",
+                        date = "March 25, 2025",
+                        imageUrl = null
                     )
                 }
                 

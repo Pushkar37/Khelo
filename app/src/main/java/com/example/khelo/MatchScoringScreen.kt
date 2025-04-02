@@ -3,12 +3,10 @@ package com.example.khelo
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.example.khelo.ui.theme.PrimaryGreen
 import androidx.compose.ui.graphics.Color
@@ -74,7 +72,8 @@ fun MatchScoringScreen(
             topBar = {
                 TopAppBar(
                     drawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
-                    scope = rememberCoroutineScope()
+                    scope = rememberCoroutineScope(),
+                    navController = navController
                 )
             },
             bottomBar = { BottomNavigationBar(navController) }
