@@ -31,7 +31,7 @@ import com.example.khelo.ui.theme.SecondaryGreen
 @Composable
 fun ProfileCard(user: User, player: Player?, navController: NavHostController){
     Card(onClick = {navController.navigate("profile")}, modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
-        Column (modifier = Modifier.background(color = SecondaryGreen)){
+        Column (modifier = Modifier.background(color = Color.Magenta)){
             Row (verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceEvenly , modifier = Modifier.padding(10.dp)){
                 Image(painterResource(R.drawable.default_profile_image), contentDescription = "" ,
                     modifier = Modifier

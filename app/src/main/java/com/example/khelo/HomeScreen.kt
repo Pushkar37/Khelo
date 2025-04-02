@@ -78,7 +78,7 @@ fun HomeScreen(navController: NavHostController) {
                     navController
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController,"HomeScreen") }
         ) { innerPadding ->
             Column(
                 modifier = Modifier
@@ -86,75 +86,75 @@ fun HomeScreen(navController: NavHostController) {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Text("Live Matches", fontSize = 20.sp)
-                }
-
-                // Live Match Display Cards
-                if (liveMatches.isEmpty()) {
-                    Text(
-                        text = "No live matches at the moment",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                } else {
-                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                        liveMatches.forEach { match ->
-                            MatchDisplaySummeryCard(
-                                team1Name = match.team1Name,
-                                team2Name = match.team2Name,
-                                team1Score = "${match.team1Score}/${match.team1Wickets}",
-                                team2Score = "${match.team2Score}/${match.team2Wickets}",
-                                overs = match.overs.toString(),
-                                onClick = {
-                                    // Navigate to LiveScoringScreen with the match ID
-                                    navController.navigate("liveScoring/${match.matchId}")
-                                }
-                            )
-                        }
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(modifier = Modifier.padding(16.dp)) {
-                    Text("Your Recent Matches", fontSize = 20.sp)
-                }
-                
-                // User's recent matches
-                val currentUser = localStorage.getCurrentUser()
-                val userMatches = currentUser?.let {
-                    localStorage.getMatchesByUser(it.phoneNumber)
-                } ?: emptyList()
-                
-                if (userMatches.isEmpty()) {
-                    Text(
-                        text = "You haven't created any matches yet",
-                        modifier = Modifier.padding(16.dp)
-                    )
-                } else {
-                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                        userMatches.take(5).forEach { match ->
-                            MatchDisplaySummeryCard(
-                                team1Name = match.team1Name,
-                                team2Name = match.team2Name,
-                                team1Score = "${match.team1Score}/${match.team1Wickets}",
-                                team2Score = "${match.team2Score}/${match.team2Wickets}",
-                                overs = match.overs.toString(),
-                                onClick = {
-                                    // If match is ongoing, navigate to LiveScoringScreen
-                                    if (match.status == "ongoing") {
-                                        navController.navigate("liveScoring/${match.matchId}")
-                                    } else {
-                                        // For completed matches, we could navigate to a match details screen
-                                        // This could be implemented later
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-                
-                Spacer(modifier = Modifier.height(16.dp))
+//                Row(modifier = Modifier.padding(16.dp)) {
+//                    Text("Live Matches", fontSize = 20.sp)
+//                }
+//
+//                // Live Match Display Cards
+//                if (liveMatches.isEmpty()) {
+//                    Text(
+//                        text = "No live matches at the moment",
+//                        modifier = Modifier.padding(16.dp)
+//                    )
+//                } else {
+//                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+//                        liveMatches.forEach { match ->
+//                            MatchDisplaySummeryCard(
+//                                team1Name = match.team1Name,
+//                                team2Name = match.team2Name,
+//                                team1Score = "${match.team1Score}/${match.team1Wickets}",
+//                                team2Score = "${match.team2Score}/${match.team2Wickets}",
+//                                overs = match.overs.toString(),
+//                                onClick = {
+//                                    // Navigate to LiveScoringScreen with the match ID
+//                                    navController.navigate("liveScoring/${match.matchId}")
+//                                }
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                Spacer(modifier = Modifier.height(16.dp))
+//
+//                Row(modifier = Modifier.padding(16.dp)) {
+//                    Text("Your Recent Matches", fontSize = 20.sp)
+//                }
+//
+//                // User's recent matches
+//                val currentUser = localStorage.getCurrentUser()
+//                val userMatches = currentUser?.let {
+//                    localStorage.getMatchesByUser(it.phoneNumber)
+//                } ?: emptyList()
+//
+//                if (userMatches.isEmpty()) {
+//                    Text(
+//                        text = "You haven't created any matches yet",
+//                        modifier = Modifier.padding(16.dp)
+//                    )
+//                } else {
+//                    Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
+//                        userMatches.take(5).forEach { match ->
+//                            MatchDisplaySummeryCard(
+//                                team1Name = match.team1Name,
+//                                team2Name = match.team2Name,
+//                                team1Score = "${match.team1Score}/${match.team1Wickets}",
+//                                team2Score = "${match.team2Score}/${match.team2Wickets}",
+//                                overs = match.overs.toString(),
+//                                onClick = {
+//                                    // If match is ongoing, navigate to LiveScoringScreen
+//                                    if (match.status == "ongoing") {
+//                                        navController.navigate("liveScoring/${match.matchId}")
+//                                    } else {
+//                                        // For completed matches, we could navigate to a match details screen
+//                                        // This could be implemented later
+//                                    }
+//                                }
+//                            )
+//                        }
+//                    }
+//                }
+//
+//                Spacer(modifier = Modifier.height(16.dp))
                 
                 Row(modifier = Modifier.padding(16.dp)) {
                     Text("Matches", fontSize = 20.sp)
@@ -165,6 +165,8 @@ fun HomeScreen(navController: NavHostController) {
                     MatchDisplaySummeryCard(
                         team1Name = "India",
                         team2Name = "Australia",
+                        team1Image = R.drawable.indianflagimage,
+                        team2Image = R.drawable.flag_of_australia_,
                         team1Score = "287/6",
                         team2Score = "192/4",
                         overs = "42.3",
@@ -174,6 +176,8 @@ fun HomeScreen(navController: NavHostController) {
                     MatchDisplaySummeryCard(
                         team1Name = "England",
                         team2Name = "South Africa",
+                        team1Image = R.drawable.england_flag,
+                        team2Image = R.drawable.south_africa_image,
                         team1Score = "325/8",
                         team2Score = "201/10",
                         overs = "50.0",
@@ -183,6 +187,8 @@ fun HomeScreen(navController: NavHostController) {
                     MatchDisplaySummeryCard(
                         team1Name = "New Zealand",
                         team2Name = "Pakistan",
+                        team1Image = R.drawable.new_zealand_image,
+                        team2Image = R.drawable.pakistan_flag_image,
                         team1Score = "156/3",
                         team2Score = "155/10",
                         overs = "32.4",
@@ -192,6 +198,8 @@ fun HomeScreen(navController: NavHostController) {
                     MatchDisplaySummeryCard(
                         team1Name = "West Indies",
                         team2Name = "Sri Lanka",
+                        team1Image = R.drawable.west_indies_flag_image,
+                        team2Image = R.drawable.flag_of_sri_lanka_svg,
                         team1Score = "203/7",
                         team2Score = "189/9",
                         overs = "50.0",
@@ -210,7 +218,8 @@ fun HomeScreen(navController: NavHostController) {
                         title = "IPL 2025: Top 5 Batsmen to Watch",
                         summary = "With the IPL 2025 season approaching, here are the top batsmen who could make a big impact this year.",
                         date = "April 1, 2025",
-                        imageUrl = null
+                        image = R.drawable.ipl_image,
+                        onClick = { TODO() },
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -219,7 +228,8 @@ fun HomeScreen(navController: NavHostController) {
                         title = "India's New Bowling Sensation Takes 5 Wickets on Debut",
                         summary = "The young fast bowler impressed everyone with his pace and accuracy in his first international match.",
                         date = "March 28, 2025",
-                        imageUrl = null
+                        image = R.drawable.ball_image,
+                        onClick = { TODO() },
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -228,7 +238,8 @@ fun HomeScreen(navController: NavHostController) {
                         title = "Cricket World Cup 2026: Host Nations Announced",
                         summary = "ICC has announced the host nations for the upcoming Cricket World Cup scheduled for 2026.",
                         date = "March 25, 2025",
-                        imageUrl = null
+                        image = R.drawable.icc_image,
+                        onClick = { TODO() },
                     )
                 }
                 

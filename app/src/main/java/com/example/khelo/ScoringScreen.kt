@@ -509,6 +509,9 @@ fun ScoringScreen(
                         }
                         
                         // Add placeholder for remaining balls in over
+                        if(scoringScreenState.currentOverBalls ==0){
+                            maxBalls=6
+                        }
                         repeat(maxBalls - scoringScreenState.currentOverEvents.size) {
                             Box(
                                 modifier = Modifier

@@ -43,7 +43,7 @@ fun StartATournamentScreen(navController: NavHostController) {
                     navController,
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController,"StartAMatchScreen") }
         ) { innerPadding ->
             Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize().padding(innerPadding)){
                 Text("Start A Tournament Screen", fontSize = 32.sp)

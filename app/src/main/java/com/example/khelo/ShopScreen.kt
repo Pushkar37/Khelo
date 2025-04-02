@@ -44,7 +44,7 @@ fun ShopScreen(navController: NavHostController) {
                     navController,
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController,"ShoppingScreen") }
         ) { innerPadding ->
             Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize().padding(innerPadding)){
                 Text("Shop Screen", fontSize = 32.sp)

@@ -42,7 +42,7 @@ fun SearchScreen(navController: NavHostController) {
                     navController,
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController, "SearchScreen") }
         ) { innerPadding ->
             Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp)){
 

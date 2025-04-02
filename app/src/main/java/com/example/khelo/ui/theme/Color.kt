@@ -16,8 +16,8 @@ val LogoGold1 = Color(0xFFC7AE6A)
 val LoginBackGround = Color(0xFFD7D6D7)
 
 
-val PrimaryGreen = Color(0xFF26A69A) // Main teal/green color from the app bar
-val SecondaryGreen = Color(0xFF2BB789) // Button color
+val PrimaryGreen = Color(0xAA0C48A5) // Main teal/green color from the app bar
+val SecondaryGreen = Color(0xFF6E85BD) // Button color
 val BackgroundWhite = Color(0xFFF8F8F8) // Light background
 val TextPrimary = Color(0xFF212121) // Dark text
 val TextSecondary = Color(0xFF757575) // Gray text

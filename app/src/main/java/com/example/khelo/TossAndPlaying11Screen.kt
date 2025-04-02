@@ -71,7 +71,7 @@ fun TossAndPlaying11Screen(
                     navController,
                 )
             },
-            bottomBar = { BottomNavigationBar(navController) }
+            bottomBar = { BottomNavigationBar(navController, "StartAMatchScreen") }
         ) { paddingValues ->
             Column(
                 modifier = Modifier

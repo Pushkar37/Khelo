@@ -36,6 +36,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.NavigationDrawerItem
@@ -209,7 +210,13 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
                 selected = selectedItem == "Log out",
                 icon = { Icon(Icons.AutoMirrored.Default.ExitToApp, contentDescription = null) },
                 colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = PrimaryGreen.copy(alpha = 0f), selectedContainerColor = PrimaryGreen),
-                onClick = { onItemClick("Log out") }
+                onClick = { onItemClick("Log out")
+
+                    localStorage.logoutUser()
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                },
             )
             Spacer(Modifier.height(12.dp))
         }
@@ -236,8 +243,8 @@ fun TopAppBar(drawerState: DrawerState, scope: CoroutineScope, navController: Na
             horizontalArrangement = Arrangement.Start,
 
             ) {
-            Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu Icon",
-                Modifier
+            Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu Icon", tint = Color.White ,
+                modifier = Modifier
                     .clickable(onClick = {
                         scope.launch {
                             if (drawerState.isClosed) {
@@ -248,12 +255,13 @@ fun TopAppBar(drawerState: DrawerState, scope: CoroutineScope, navController: Na
                         }
                     }
                     )
-                    .size(40.dp)
+                    .size(30.dp)
             )
             Text(
                 text = "Kheloo",
                 fontWeight = FontWeight.Medium,
                 fontSize = 30.sp,
+                color = Color.White,
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(0.9f)
@@ -261,7 +269,8 @@ fun TopAppBar(drawerState: DrawerState, scope: CoroutineScope, navController: Na
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "person image",
-                Modifier.size(35.dp)
+                tint = Color.White,
+                modifier = Modifier.size(35.dp)
                     .clickable(onClick = { navController.navigate("profile") },)
             )
         }
@@ -270,7 +279,9 @@ fun TopAppBar(drawerState: DrawerState, scope: CoroutineScope, navController: Na
 
 
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(navController: NavHostController, selectedItem0: String) {
+
+    var selectedItem by remember { mutableStateOf(selectedItem0) }
 
     Card(shape = RectangleShape, elevation = CardDefaults.cardElevation(defaultElevation = 50.dp),
         modifier = Modifier
@@ -290,29 +301,43 @@ fun BottomNavigationBar(navController: NavHostController) {
 
 
         ) {
-            Icon(Icons.Default.Home, contentDescription = "Home icon",
+            Icon(Icons.Default.Home, contentDescription = "Home icon", tint = if (selectedItem == "HomeScreen") PrimaryGreen else Color.White,
                 modifier = Modifier
                     .clickable(onClick = {
+                        selectedItem = "HomeScreen"
                         navController.navigate(HomeScreen.route)
                     }
                     )
             )
-            Icon(Icons.Default.Search, contentDescription = "Search icon" , Modifier.clickable(onClick = {navController.navigate(SearchScreen.route)}))
+            Icon(imageVector = Icons.Default.Search, contentDescription = "Search icon" ,
+                tint = if (selectedItem == "SearchScreen") PrimaryGreen else Color.White,
+                modifier = Modifier.clickable(onClick = {
+                    selectedItem = "SearchScreen"
+                    navController.navigate(SearchScreen.route)
+                }))
+
             Icon(Icons.Default.AddCircle, contentDescription = "Add icon",
+                tint = if (selectedItem == "StartAMatchScreen") PrimaryGreen else Color.White,
                 modifier = Modifier
                     .clickable(onClick = {
+                        selectedItem = "StartAMatchScreen"
                         navController.navigate(StartAMatchScreen.route)
                     }
                     )
             )
             Icon(Icons.Default.AccountCircle, contentDescription = "Add icon",
+                tint = if (selectedItem == "ProfileScreen") PrimaryGreen else Color.White,
                 modifier = Modifier
                     .clickable(
-                        onClick = { navController.navigate("profile") },))
+                        onClick = {
+                            selectedItem = "ProfileScreen"
+                            navController.navigate("profile") },))
 
             Icon(Icons.Default.ShoppingCart, contentDescription = "Shopping Cart",
+                tint = if (selectedItem == "ShoppingScreen") PrimaryGreen else Color.White,
                 modifier = Modifier
                     .clickable(onClick = {
+                        selectedItem = "ShoppingScreen"
                         navController.navigate(ShopScreen.route)
                     }
                     )
