@@ -50,10 +50,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -104,8 +106,8 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
                 .fillMaxWidth(0.9f)
 
         ) {
-            Spacer(Modifier.height(12.dp))
-            Text("Drawer Title", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
+            Spacer(Modifier.height(24.dp))
+//            Text("Drawer Title", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
             ProfileCard(
                 user = currentUser,
                 player = player,
@@ -136,7 +138,7 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            Text("Section 2", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
+//            Text("Section 2", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
 
             NavigationDrawerItem(
                 label = { Text("Live Matches") },
@@ -174,7 +176,7 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            Text("Section 3", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
+//            Text("Section 3", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
             NavigationDrawerItem(
                 label = { Text("Settings") },
                 selected = selectedItem == "Settings",
@@ -206,9 +208,9 @@ fun DrawerPanel(navController: NavHostController, selectedItem: String, onItemCl
                 onClick = { onItemClick("Rate Us") }
             )
             NavigationDrawerItem(
-                label = { Text("Log out") },
+                label = { Text("Log out" , fontWeight = FontWeight.Bold , color = Color.Red) },
                 selected = selectedItem == "Log out",
-                icon = { Icon(Icons.AutoMirrored.Default.ExitToApp, contentDescription = null) },
+                icon = { Icon(Icons.AutoMirrored.Default.ExitToApp, contentDescription = null , tint = Color.Red) },
                 colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = PrimaryGreen.copy(alpha = 0f), selectedContainerColor = PrimaryGreen),
                 onClick = { onItemClick("Log out")
 
@@ -257,6 +259,13 @@ fun TopAppBar(drawerState: DrawerState, scope: CoroutineScope, navController: Na
                     )
                     .size(30.dp)
             )
+
+//            Icon(painter = painterResource(R.drawable.khelo_logo), contentDescription = "Kheloo Icon", tint = Color.White ,
+//                modifier = Modifier
+//                    .clip(shape = RectangleShape)
+////                    .size(30.dp)
+//            )
+
             Text(
                 text = "Kheloo",
                 fontWeight = FontWeight.Medium,

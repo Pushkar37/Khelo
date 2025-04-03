@@ -153,17 +153,17 @@ fun MatchDisplaySummeryCard(
                     )
                 }
             }
-            
-            HorizontalDivider()
-            
-            Row {
-                Text(
-                    "Live Match",
-                    modifier = Modifier.padding(10.dp),
-                    color = PrimaryGreen,
-                    fontWeight = FontWeight.Bold
-                )
-            }
+//
+//            HorizontalDivider()
+//
+//            Row {
+//                Text(
+//                    "Live Match",
+//                    modifier = Modifier.padding(10.dp),
+//                    color = PrimaryGreen,
+//                    fontWeight = FontWeight.Bold
+//                )
+//            }
         }
     }
 }

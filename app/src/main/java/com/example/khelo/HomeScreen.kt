@@ -28,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -157,7 +158,7 @@ fun HomeScreen(navController: NavHostController) {
 //                Spacer(modifier = Modifier.height(16.dp))
                 
                 Row(modifier = Modifier.padding(16.dp)) {
-                    Text("Matches", fontSize = 20.sp)
+                    Text("Matches", fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 }
                 
                 // Dummy Matches
@@ -208,7 +209,7 @@ fun HomeScreen(navController: NavHostController) {
                 }
 
                 Row(modifier = Modifier.padding(16.dp)) {
-                    Text("Articles", fontSize = 20.sp)
+                    Text("Articles", fontSize = 20.sp , fontWeight =  FontWeight.Bold)
                 }
 
                 // Dummy Articles

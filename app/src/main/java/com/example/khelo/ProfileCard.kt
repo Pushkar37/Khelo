@@ -26,12 +26,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.khelo.data.model.Player
 import com.example.khelo.data.model.User
+import com.example.khelo.ui.theme.AccentYellow
+import com.example.khelo.ui.theme.AccentYellowDark
+import com.example.khelo.ui.theme.Purple40
 import com.example.khelo.ui.theme.SecondaryGreen
 
 @Composable
 fun ProfileCard(user: User, player: Player?, navController: NavHostController){
     Card(onClick = {navController.navigate("profile")}, modifier = Modifier.fillMaxWidth(), elevation = CardDefaults.cardElevation(defaultElevation = 20.dp , pressedElevation = 0.dp)) {
-        Column (modifier = Modifier.background(color = Color.Magenta)){
+        Column (modifier = Modifier.background(Purple40.copy(alpha = .6f))){
             Row (verticalAlignment = Alignment.CenterVertically , horizontalArrangement = Arrangement.SpaceEvenly , modifier = Modifier.padding(10.dp)){
                 Image(painterResource(R.drawable.default_profile_image), contentDescription = "" ,
                     modifier = Modifier
@@ -46,7 +49,7 @@ fun ProfileCard(user: User, player: Player?, navController: NavHostController){
             }
             HorizontalDivider()
             Row {
-                Text("Batting type , Bowling type" , modifier = Modifier.padding(10.dp))
+                Text("Right Handed Batsman , Right Arm Leg Spinner" , modifier = Modifier.padding(10.dp))
             }
             HorizontalDivider()
             Row {
@@ -56,22 +59,22 @@ fun ProfileCard(user: User, player: Player?, navController: NavHostController){
                     Column (horizontalAlignment = alignment){
                         Text("Matches")
                         Text("0")
-                        Text("0")
+
                     }
                     Column (horizontalAlignment = alignment){
                         Text("Runs")
-                        Text("0")
-                        Text("0")
+                        Text("2640")
+
                     }
                     Column (horizontalAlignment = alignment){
                         Text("Wickets")
-                        Text("0")
-                        Text("0")
+                        Text("5")
+
                     }
                     Column (horizontalAlignment = alignment){
                         Text("catches")
-                        Text("0")
-                        Text("0")
+                        Text("1")
+
                     }
                 }
             }

@@ -158,20 +158,22 @@ fun PlayerStatsSection(player: Player?) {
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            text = "Cricket Statistics",
+            text = "Player Statistics",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 8.dp)
         )
         
         // Stats Cards
+//        TODO("Implementation hardcoded")
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             StatCard(
                 title = "Matches",
-                value = player?.totalMatches?.toString() ?: "0",
+                value = "45",
+//                value = player?.totalMatches?.toString() ?: "0",
                 modifier = Modifier.weight(1f)
             )
             
@@ -179,7 +181,8 @@ fun PlayerStatsSection(player: Player?) {
             
             StatCard(
                 title = "Runs",
-                value = player?.totalRuns?.toString() ?: "0",
+                value = "2640",
+//                value = player?.totalRuns?.toString() ?: "0",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -192,7 +195,8 @@ fun PlayerStatsSection(player: Player?) {
         ) {
             StatCard(
                 title = "Wickets",
-                value = player?.totalWickets?.toString() ?: "0",
+//                value = player?.totalWickets?.toString() ?: "0",
+                value = "5",
                 modifier = Modifier.weight(1f)
             )
             
@@ -200,7 +204,8 @@ fun PlayerStatsSection(player: Player?) {
             
             StatCard(
                 title = "Catches",
-                value = player?.totalCatches?.toString() ?: "0",
+                value = "1",
+//                value = player?.totalCatches?.toString() ?: "0",
                 modifier = Modifier.weight(1f)
             )
         }
@@ -211,7 +216,8 @@ fun PlayerStatsSection(player: Player?) {
         val battingAverage = if ((player?.totalMatches ?: 0) > 0 && (player?.totalRuns ?: 0) > 0) {
             String.format("%.2f", player!!.totalRuns.toFloat() / player.totalMatches.toFloat())
         } else {
-            "0.00"
+//            "0.00"
+            "66.0"
         }
         
         StatCard(
