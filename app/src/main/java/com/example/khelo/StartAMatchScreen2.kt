@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavHostController
 import com.example.khelo.ui.theme.PrimaryGreen
@@ -149,16 +150,21 @@ fun StartAMatchScreen2(
                 ) {
                     // Team 1 Players List
                     Column(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f).padding(4.dp)
                     ) {
                         Text(text = team1Name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
                         (enteredItems["team1Players"] ?: emptyList()).forEach { player ->
                             Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                colors = CardDefaults.cardColors(containerColor = PrimaryGreen)
+                                    .padding(4.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color.White
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 4.dp
+                                ),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
                                 Row(
                                     modifier = Modifier
@@ -169,7 +175,7 @@ fun StartAMatchScreen2(
                                     Text(
                                         text = player,
                                         modifier = Modifier.weight(1f),
-                                        color = Color.White
+                                        color = PrimaryGreen
                                     )
                                     IconButton(
                                         onClick = {
@@ -183,7 +189,7 @@ fun StartAMatchScreen2(
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = "Delete ${team1Name} player",
-                                            tint = Color.White
+                                            tint = Color.Red.copy(alpha = 0.5f)
                                         )
                                     }
                                 }
@@ -193,16 +199,21 @@ fun StartAMatchScreen2(
 
                     // Team 2 Players List
                     Column(
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f).padding(4.dp)
                     ) {
                         Text(text = team2Name, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(8.dp))
                         (enteredItems["team2Players"] ?: emptyList()).forEach { player ->
                             Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp),
-                                colors = CardDefaults.cardColors(containerColor = PrimaryGreen)
+                                    .padding(4.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color.White
+                                ),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 4.dp
+                                ),
+                                shape = RoundedCornerShape(8.dp)
                             ) {
                                 Row(
                                     modifier = Modifier
@@ -213,7 +224,7 @@ fun StartAMatchScreen2(
                                     Text(
                                         text = player,
                                         modifier = Modifier.weight(1f),
-                                        color = Color.White
+                                        color = PrimaryGreen
                                     )
                                     IconButton(
                                         onClick = {
@@ -227,7 +238,7 @@ fun StartAMatchScreen2(
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = "Delete ${team2Name} player",
-                                            tint = Color.White
+                                            tint = Color.Red.copy(alpha = 0.5f)
                                         )
                                     }
                                 }
