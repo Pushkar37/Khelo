@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun StartAMatchScreen2(
     navController: NavHostController,
-    team1Name: String,
-    team2Name: String,
-    totalOvers: String
+    team1Name: String = "",
+    team2Name: String = "",
+    totalOvers: String = "20"
 ) {
     var selectedItem by remember { mutableStateOf("Item 1") }
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)

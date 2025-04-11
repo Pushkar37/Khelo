@@ -19,13 +19,13 @@ import com.example.khelo.ui.theme.PrimaryGreen
 @Composable
 fun CaptainSelectionScreen(
     navController: NavHostController,
-    team1Players: List<String> = emptyList(),
-    team2Players: List<String> = emptyList(),
-    team1Name: String? = null,
-    team2Name: String? = null,
-    tossWinner: String? = null,
-    tossDecision: String? = null,
-    totalOvers: String? = null
+    team1Players: List<String>,
+    team2Players: List<String>,
+    team1Name: String = "",
+    team2Name: String = "",
+    tossWinner: String = "",
+    tossDecision: String = "",
+    totalOvers: String
 ) {
     // Use safe defaults for team names
     val team1NameSafe = team1Name ?: "Team 1"
@@ -267,11 +267,11 @@ fun CaptainSelectionScreen(
                         navController.navigate(
                             "LineupSelectionScreen?team1Players=${team1Players.joinToString(",")}" +
                             "&team2Players=${team2Players.joinToString(",")}" +
-                            "&team1Name=$team1NameSafe&team2Name=$team2NameSafe" +
-                            "&tossWinner=$tossWinner&tossDecision=$tossDecision" +
+                            "&team1Name=${team1Name}&team2Name=${team2Name}" +
+                            "&tossWinner=${tossWinner}&tossDecision=${tossDecision}" +
                             "&team1Captain=$team1Captain&team1ViceCaptain=$team1ViceCaptain" +
                             "&team2Captain=$team2Captain&team2ViceCaptain=$team2ViceCaptain" +
-                            "&totalOvers=${totalOvers ?: "20"}"
+                            "&totalOvers=$totalOvers"
                         )
                     }
                 },

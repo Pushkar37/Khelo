@@ -19,8 +19,8 @@ fun TossAndPlaying11Screen(
     navController: NavHostController,
     team1Players: List<String>,
     team2Players: List<String>,
-    team1Name: String,
-    team2Name: String,
+    team1Name: String = "",
+    team2Name: String = "",
     totalOvers: String
 ) {
     var selectedItem by remember { mutableStateOf("Item 1") }
@@ -289,7 +289,7 @@ fun TossAndPlaying11Screen(
                             selectedTeam1Players.size == 11 && selectedTeam2Players.size == 11) {
                             // Navigate to CaptainSelectionScreen with selected players
                             navController.navigate(
-                                "CaptainSelectionScreen?team1Players=${selectedTeam1Players.joinToString(",")}&team2Players=${selectedTeam2Players.joinToString(",")}&team1Name=$team1Name&team2Name=$team2Name&tossWinner=$tossWinner&tossDecision=$tossDecision&totalOvers=$totalOvers"
+                                "CaptainSelectionScreen?team1Players=${selectedTeam1Players.joinToString(",")}&team2Players=${selectedTeam2Players.joinToString(",")}&team1Name=${team1Name}&team2Name=${team2Name}&tossWinner=${tossWinner}&tossDecision=${tossDecision}&totalOvers=${totalOvers}"
                             )
                         }
                     },
@@ -310,8 +310,8 @@ fun TossAndPlaying11Screen(
 private fun StartAMatchScreenContent(
     team1Players: List<String>,
     team2Players: List<String>,
-    team1Name: String,
-    team2Name: String,
+    team1Name: String = "",
+    team2Name: String = "",
     onPlaying11Selected: (List<String>, List<String>) -> Unit
 ) {
     var selectedTeam1Players by remember { mutableStateOf(emptyList<String>()) }

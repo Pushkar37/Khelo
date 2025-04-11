@@ -24,7 +24,7 @@ class ScoringScreenState(
     initialBattingTeamName: String,
     initialBowlingTeamName: String,
     initialBattedPlayers: List<String>,
-    totalOvers: Int = 20
+    totalOvers: Int
 ) {
     // Match state
     var currentInnings by mutableStateOf(1)

@@ -18,17 +18,17 @@ import com.example.khelo.ui.theme.PrimaryGreen
 @Composable
 fun LineupSelectionScreen(
     navController: NavHostController,
-    team1Players: List<String> = emptyList(),
-    team2Players: List<String> = emptyList(),
-    team1Name: String? = null,
-    team2Name: String? = null,
-    tossWinner: String? = null,
-    tossDecision: String? = null,
+    team1Players: List<String>,
+    team2Players: List<String>,
+    team1Name: String = "",
+    team2Name: String = "",
+    tossWinner: String = "",
+    tossDecision: String = "",
     team1Captain: String? = null,
     team1ViceCaptain: String? = null,
     team2Captain: String? = null,
     team2ViceCaptain: String? = null,
-    totalOvers: String? = null
+    totalOvers: String
 ) {
     // Use safe defaults for team names
     val team1NameSafe = team1Name ?: "Team 1"
@@ -245,7 +245,7 @@ fun LineupSelectionScreen(
                         bowler.isNotBlank() && wicketkeeper.isNotBlank()) {
                         // Navigate to the scoring screen with all match information
                         navController.navigate(
-                            "ScoringScreen?team1Name=${team1NameSafe}&team2Name=${team2NameSafe}" +
+                            "ScoringScreen?team1Name=${team1Name ?: ""}&team2Name=${team2Name ?: ""}" +
                             "&team1Players=${team1Players.joinToString(",")}" +
                             "&team2Players=${team2Players.joinToString(",")}" +
                             "&tossWinner=${tossWinner ?: ""}&tossDecision=${tossDecision ?: ""}" +
@@ -254,7 +254,7 @@ fun LineupSelectionScreen(
                             "&striker=${batsman1}&nonStriker=${batsman2}" +
                             "&bowler=${bowler}&wicketkeeper=${wicketkeeper}" +
                             "&battingTeamName=${battingTeamName}&bowlingTeamName=${bowlingTeamName}" +
-                            "&totalOvers=${totalOvers ?: "20"}"
+                            "&totalOvers=${totalOvers}"
                         )
                     }
                 },

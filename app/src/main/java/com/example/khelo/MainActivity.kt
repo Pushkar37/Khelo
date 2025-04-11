@@ -52,35 +52,46 @@ fun MainScreen() {
                 navController = navController,
                 team1Players = emptyList(),
                 team2Players = emptyList(),
-                team1Name = null,
-                team2Name = null,
-                tossWinner = null,
-                tossDecision = null
+                team1Name = "",
+                team2Name = "",
+                tossWinner = "",
+                tossDecision = "",
+                totalOvers = ""
             )
         }
         composable(
-            "CaptainSelectionScreen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}",
+            "CaptainSelectionScreen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}&totalOvers={totalOvers}",
             arguments = listOf(
                 navArgument("team1Players") { type = NavType.StringType },
                 navArgument("team2Players") { type = NavType.StringType },
                 navArgument("team1Name") { type = NavType.StringType },
                 navArgument("team2Name") { type = NavType.StringType },
                 navArgument("tossWinner") { type = NavType.StringType },
-                navArgument("tossDecision") { type = NavType.StringType }
+                navArgument("tossDecision") { type = NavType.StringType },
+                navArgument("totalOvers") { type = NavType.StringType }
             )
         ) { backStackEntry ->
+            val team1Players = backStackEntry.arguments?.getString("team1Players") ?: ""
+            val team2Players = backStackEntry.arguments?.getString("team2Players") ?: ""
+            val team1Name = backStackEntry.arguments?.getString("team1Name") ?: ""
+            val team2Name = backStackEntry.arguments?.getString("team2Name") ?: ""
+            val tossWinner = backStackEntry.arguments?.getString("tossWinner") ?: ""
+            val tossDecision = backStackEntry.arguments?.getString("tossDecision") ?: ""
+            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: ""
+
             CaptainSelectionScreen(
                 navController = navController,
-                team1Players = backStackEntry.arguments?.getString("team1Players")?.split(",") ?: emptyList(),
-                team2Players = backStackEntry.arguments?.getString("team2Players")?.split(",") ?: emptyList(),
-                team1Name = backStackEntry.arguments?.getString("team1Name"),
-                team2Name = backStackEntry.arguments?.getString("team2Name"),
-                tossWinner = backStackEntry.arguments?.getString("tossWinner"),
-                tossDecision = backStackEntry.arguments?.getString("tossDecision")
+                team1Players = team1Players.split(","),
+                team2Players = team2Players.split(","),
+                team1Name = team1Name,
+                team2Name = team2Name,
+                tossWinner = tossWinner,
+                tossDecision = tossDecision,
+                totalOvers = totalOversStr
             )
         }
         composable(
-            "LineupSelectionScreen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}&team1Captain={team1Captain}&team1ViceCaptain={team1ViceCaptain}&team2Captain={team2Captain}&team2ViceCaptain={team2ViceCaptain}",
+            "LineupSelectionScreen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}&team1Captain={team1Captain}&team1ViceCaptain={team1ViceCaptain}&team2Captain={team2Captain}&team2ViceCaptain={team2ViceCaptain}&totalOvers={totalOvers}",
             arguments = listOf(
                 navArgument("team1Players") { type = NavType.StringType },
                 navArgument("team2Players") { type = NavType.StringType },
@@ -91,21 +102,35 @@ fun MainScreen() {
                 navArgument("team1Captain") { type = NavType.StringType },
                 navArgument("team1ViceCaptain") { type = NavType.StringType },
                 navArgument("team2Captain") { type = NavType.StringType },
-                navArgument("team2ViceCaptain") { type = NavType.StringType }
+                navArgument("team2ViceCaptain") { type = NavType.StringType },
+                navArgument("totalOvers") { type = NavType.StringType }
             )
         ) { backStackEntry ->
+            val team1Players = backStackEntry.arguments?.getString("team1Players") ?: ""
+            val team2Players = backStackEntry.arguments?.getString("team2Players") ?: ""
+            val team1Name = backStackEntry.arguments?.getString("team1Name") ?: ""
+            val team2Name = backStackEntry.arguments?.getString("team2Name") ?: ""
+            val tossWinner = backStackEntry.arguments?.getString("tossWinner") ?: ""
+            val tossDecision = backStackEntry.arguments?.getString("tossDecision") ?: ""
+            val team1Captain = backStackEntry.arguments?.getString("team1Captain") ?: ""
+            val team1ViceCaptain = backStackEntry.arguments?.getString("team1ViceCaptain") ?: ""
+            val team2Captain = backStackEntry.arguments?.getString("team2Captain") ?: ""
+            val team2ViceCaptain = backStackEntry.arguments?.getString("team2ViceCaptain") ?: ""
+            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: ""
+
             LineupSelectionScreen(
                 navController = navController,
-                team1Players = backStackEntry.arguments?.getString("team1Players")?.split(",") ?: emptyList(),
-                team2Players = backStackEntry.arguments?.getString("team2Players")?.split(",") ?: emptyList(),
-                team1Name = backStackEntry.arguments?.getString("team1Name"),
-                team2Name = backStackEntry.arguments?.getString("team2Name"),
-                tossWinner = backStackEntry.arguments?.getString("tossWinner"),
-                tossDecision = backStackEntry.arguments?.getString("tossDecision"),
-                team1Captain = backStackEntry.arguments?.getString("team1Captain"),
-                team1ViceCaptain = backStackEntry.arguments?.getString("team1ViceCaptain"),
-                team2Captain = backStackEntry.arguments?.getString("team2Captain"),
-                team2ViceCaptain = backStackEntry.arguments?.getString("team2ViceCaptain")
+                team1Players = team1Players.split(","),
+                team2Players = team2Players.split(","),
+                team1Name = team1Name,
+                team2Name = team2Name,
+                tossWinner = tossWinner,
+                tossDecision = tossDecision,
+                team1Captain = team1Captain,
+                team1ViceCaptain = team1ViceCaptain,
+                team2Captain = team2Captain,
+                team2ViceCaptain = team2ViceCaptain,
+                totalOvers = totalOversStr
             )
         }
         composable(
@@ -118,12 +143,13 @@ fun MainScreen() {
         ) { backStackEntry ->
             val team1Name = backStackEntry.arguments?.getString("team1Name") ?: ""
             val team2Name = backStackEntry.arguments?.getString("team2Name") ?: ""
-            val totalOvers = backStackEntry.arguments?.getString("totalOvers") ?: "20"
+            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: ""
+
             StartAMatchScreen2(
                 navController = navController,
                 team1Name = team1Name,
                 team2Name = team2Name,
-                totalOvers = totalOvers
+                totalOvers = totalOversStr
             )
         }
         composable(
@@ -136,52 +162,51 @@ fun MainScreen() {
                 navArgument("totalOvers") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val team1Players = backStackEntry.arguments?.getString("team1Players")?.split(",") ?: emptyList()
-            val team2Players = backStackEntry.arguments?.getString("team2Players")?.split(",") ?: emptyList()
+            val team1Players = backStackEntry.arguments?.getString("team1Players") ?: ""
+            val team2Players = backStackEntry.arguments?.getString("team2Players") ?: ""
             val team1Name = backStackEntry.arguments?.getString("team1Name") ?: ""
             val team2Name = backStackEntry.arguments?.getString("team2Name") ?: ""
-            val totalOvers = backStackEntry.arguments?.getString("totalOvers") ?: "20"
+            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: ""
+
             TossAndPlaying11Screen(
                 navController = navController,
-                team1Players = team1Players,
-                team2Players = team2Players,
+                team1Players = team1Players.split(","),
+                team2Players = team2Players.split(","),
                 team1Name = team1Name,
                 team2Name = team2Name,
-                totalOvers = totalOvers
+                totalOvers = totalOversStr
             )
         }
         composable(
-            "CaptainSelectionScreen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}",
+            "CaptainSelectionScreen?team1Players={team1Players}&team2Players={team2Players}&team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}&totalOvers={totalOvers}",
             arguments = listOf(
                 navArgument("team1Players") { type = NavType.StringType },
                 navArgument("team2Players") { type = NavType.StringType },
                 navArgument("team1Name") { type = NavType.StringType },
                 navArgument("team2Name") { type = NavType.StringType },
                 navArgument("tossWinner") { type = NavType.StringType },
-                navArgument("tossDecision") { type = NavType.StringType }
+                navArgument("tossDecision") { type = NavType.StringType },
+                navArgument("totalOvers") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            val team1Players = backStackEntry.arguments?.getString("team1Players")?.split(",") ?: emptyList()
-            val team2Players = backStackEntry.arguments?.getString("team2Players")?.split(",") ?: emptyList()
-            val team1Name = backStackEntry.arguments?.getString("team1Name") ?: "Team 1"
-            val team2Name = backStackEntry.arguments?.getString("team2Name") ?: "Team 2"
+            val team1Players = backStackEntry.arguments?.getString("team1Players") ?: ""
+            val team2Players = backStackEntry.arguments?.getString("team2Players") ?: ""
+            val team1Name = backStackEntry.arguments?.getString("team1Name") ?: ""
+            val team2Name = backStackEntry.arguments?.getString("team2Name") ?: ""
             val tossWinner = backStackEntry.arguments?.getString("tossWinner") ?: ""
             val tossDecision = backStackEntry.arguments?.getString("tossDecision") ?: ""
+            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: ""
 
-            @Composable
-            fun Content() {
-                CaptainSelectionScreen(
-                    navController = navController,
-                    team1Players = team1Players,
-                    team2Players = team2Players,
-                    team1Name = team1Name,
-                    team2Name = team2Name,
-                    tossWinner = tossWinner,
-                    tossDecision = tossDecision
-                )
-            }
-
-            Content()
+            CaptainSelectionScreen(
+                navController = navController,
+                team1Players = team1Players.split(","),
+                team2Players = team2Players.split(","),
+                team1Name = team1Name,
+                team2Name = team2Name,
+                tossWinner = tossWinner,
+                tossDecision = tossDecision,
+                totalOvers = totalOversStr
+            )
         }
         composable(
             "MatchScoringScreen?team1Name={team1Name}&team2Name={team2Name}&tossWinner={tossWinner}&tossDecision={tossDecision}&openingBatsman1={openingBatsman1}&openingBatsman2={openingBatsman2}&openingBowler={openingBowler}&wicketKeeper={wicketKeeper}&battingTeam={battingTeam}&bowlingTeam={bowlingTeam}",
@@ -208,7 +233,7 @@ fun MainScreen() {
             val wicketKeeper = backStackEntry.arguments?.getString("wicketKeeper") ?: ""
             val battingTeam = backStackEntry.arguments?.getString("battingTeam") ?: ""
             val bowlingTeam = backStackEntry.arguments?.getString("bowlingTeam") ?: ""
-            
+
             MatchScoringScreen(
                 navController = navController,
                 team1Name = team1Name,
@@ -274,11 +299,10 @@ fun MainScreen() {
             val wicketkeeper = backStackEntry.arguments?.getString("wicketkeeper") ?: ""
             val battingTeam = backStackEntry.arguments?.getString("battingTeamName") ?: ""
             val bowlingTeam = backStackEntry.arguments?.getString("bowlingTeamName") ?: ""
-            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: "20"
-            val totalOvers = totalOversStr.toIntOrNull() ?: 20
-            
-            val team1Players = if (team1PlayersStr.isNotEmpty()) team1PlayersStr.split(",") else emptyList()
-            val team2Players = if (team2PlayersStr.isNotEmpty()) team2PlayersStr.split(",") else emptyList()
+            val totalOversStr = backStackEntry.arguments?.getString("totalOvers") ?: ""
+
+            val team1Players = team1PlayersStr.split(",")
+            val team2Players = team2PlayersStr.split(",")
             
             ScoringScreen(
                 navController = navController,
@@ -298,7 +322,7 @@ fun MainScreen() {
                 wicketkeeper = wicketkeeper,
                 battingTeam = battingTeam,
                 bowlingTeam = bowlingTeam,
-                totalOvers = totalOvers
+                totalOvers = totalOversStr.toIntOrNull() ?: 20
             )
         }
         

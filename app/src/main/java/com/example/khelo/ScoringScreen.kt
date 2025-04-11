@@ -52,7 +52,7 @@ fun ScoringScreen(
     wicketkeeper: String? = null,
     battingTeam: String? = null,
     bowlingTeam: String? = null,
-    totalOvers: Int = 20
+    totalOvers: Int
 ) {
     // Safe defaults
     val team1NameSafe = team1Name ?: "Team 1"
@@ -618,6 +618,7 @@ fun ScoringScreen(
                                 scoringScreenState.isStumped = false
                                 scoringScreenState.isLBW = false
                                 scoringScreenState.isHitWicket = false
+                                scoringScreenState.isRunOut = false
                                 scoringScreenState.fielderName = ""
                             }
                         }
