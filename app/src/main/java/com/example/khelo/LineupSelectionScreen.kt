@@ -256,8 +256,11 @@ fun LineupSelectionScreen(
                             "&battingTeamName=${battingTeamName}&bowlingTeamName=${bowlingTeamName}" +
                             "&totalOvers=${totalOvers}"
                         )
+                    } else {
+                        // Optionally, show a message to the user (snackbar, toast, etc.)
                     }
                 },
+                enabled = batsman1.isNotBlank() && batsman2.isNotBlank() && bowler.isNotBlank() && wicketkeeper.isNotBlank(),
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors(PrimaryGreen)
             ) {

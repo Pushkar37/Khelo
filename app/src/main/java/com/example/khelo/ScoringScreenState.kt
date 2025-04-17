@@ -103,6 +103,9 @@ class ScoringScreenState(
     var newBowlerName by mutableStateOf("")
     var retireBatsmanName by mutableStateOf("")
     var isRetiredHurt by mutableStateOf(false)
+    // Add openers selection state
+    var isSelectingOpeners by mutableStateOf(false)
+    var openersSelected by mutableStateOf(0)
     
     // Player stats maps
     var batsmenStats by mutableStateOf<Map<String, BatsmanStats>>(mutableMapOf())
@@ -533,26 +536,34 @@ class ScoringScreenState(
         completedOvers++
         currentBalls = 0
         currentOverBalls = 0
-        
-        // Update bowler stats
-        bowlerOvers++
-        
-        // Check for maiden over
-        if (runsInCurrentOver == 0) {
-            bowlerMaidens++
-        }
-        
+
+        // Update bowler stats in persistent map
+        val currentStats = bowlersStats[currentBowler] ?: BowlerStats(currentBowler)
+        val updatedStats = currentStats.copy(
+            overs = currentStats.overs + 1,
+            maidens = currentStats.maidens + if (runsInCurrentOver == 0) 1 else 0,
+            runs = currentStats.runs + bowlerRuns,
+            wickets = currentStats.wickets + bowlerWickets
+        )
+        bowlersStats = bowlersStats + (currentBowler to updatedStats)
+
+        // Reset temporary bowler fields for next bowler
+        bowlerOvers = 0
+        bowlerMaidens = 0
+        bowlerRuns = 0
+        bowlerWickets = 0
+
         // Reset current over events and runs
         currentOverEvents = emptyList()
         runsInCurrentOver = 0
-        
+
         // Switch striker
         switchStriker()
-        
+
         // Set last bowler and show dialog to select new bowler
         lastBowler = currentBowler
         showNewBowlerDialog = true
-        
+
         // Check for innings completion
         checkForInningsCompletion()
     }
@@ -643,6 +654,11 @@ class ScoringScreenState(
         
         // Update innings
         currentInnings = 2
+        
+        // Prepare to select openers
+        isSelectingOpeners = true
+        openersSelected = 0
+        showNewBatsmanDialog = true
     }
     
     // Initialize a new batsman

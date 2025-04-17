@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -1012,8 +1014,14 @@ fun ScoringScreen(
             // New batsman dialog
             if (scoringScreenState.showNewBatsmanDialog) {
                 AlertDialog(
-                    onDismissRequest = { /* Dialog cannot be dismissed without selection */ },
-                    title = { Text("Select New Batsman") },
+                    onDismissRequest = { scoringScreenState.showNewBatsmanDialog = false },
+                    title = {
+                        if (scoringScreenState.isSelectingOpeners) {
+                            Text("Select Opening Batsman" + if (scoringScreenState.openersSelected == 0) " 1" else " 2")
+                        } else {
+                            Text("Select New Batsman")
+                        }
+                    },
                     text = {
                         Column {
                             val availableBatsmen = if (scoringScreenState.battingTeamName == team1NameSafe) {
@@ -1033,7 +1041,7 @@ fun ScoringScreen(
                                         .clickable {
                                             scoringScreenState.newBatsmanName = player
                                         }
-                                        .padding(vertical = 8.dp),
+                                        .padding(vertical = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -1051,23 +1059,45 @@ fun ScoringScreen(
                     confirmButton = {
                         Button(
                             onClick = {
-                                // Update striker with new batsman
-                                scoringScreenState.striker = scoringScreenState.newBatsmanName
-                                scoringScreenState.strikerRuns = 0
-                                scoringScreenState.strikerBalls = 0
-                                scoringScreenState.strikerFours = 0
-                                scoringScreenState.strikerSixes = 0
-                                
-                                // Add to batted players list
-                                scoringScreenState.battedPlayers = scoringScreenState.battedPlayers + scoringScreenState.newBatsmanName
-                                
-                                // Reset dialog state
-                                scoringScreenState.showNewBatsmanDialog = false
-                                scoringScreenState.newBatsmanName = ""
-                            },
-                            enabled = scoringScreenState.newBatsmanName.isNotEmpty()
+                                val selectedName = scoringScreenState.newBatsmanName
+                                if (selectedName.isNotBlank()) {
+                                    scoringScreenState.initializeBatsman(selectedName)
+                                    if (scoringScreenState.isSelectingOpeners) {
+                                        if (scoringScreenState.openersSelected == 0) {
+                                            scoringScreenState.striker = selectedName
+                                            scoringScreenState.openersSelected = 1
+                                            scoringScreenState.newBatsmanName = ""
+                                            // Stay in dialog for second opener
+                                        } else {
+                                            scoringScreenState.nonStriker = selectedName
+                                            scoringScreenState.openersSelected = 2
+                                            scoringScreenState.isSelectingOpeners = false
+                                            scoringScreenState.showNewBatsmanDialog = false
+                                            scoringScreenState.newBatsmanName = ""
+                                            // Now prompt for bowler
+                                            scoringScreenState.showNewBowlerDialog = true
+                                        }
+                                    } else {
+                                        // Usual new batsman logic (e.g., after wicket)
+                                        if (scoringScreenState.striker.isBlank()) {
+                                            scoringScreenState.striker = selectedName
+                                        } else {
+                                            scoringScreenState.nonStriker = selectedName
+                                        }
+                                        scoringScreenState.showNewBatsmanDialog = false
+                                        scoringScreenState.newBatsmanName = ""
+                                    }
+                                }
+                            }
                         ) {
                             Text("Confirm")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = { scoringScreenState.showNewBatsmanDialog = false }
+                        ) {
+                            Text("Cancel")
                         }
                     }
                 )
@@ -1095,7 +1125,7 @@ fun ScoringScreen(
                                         .clickable {
                                             scoringScreenState.newBowlerName = player
                                         }
-                                        .padding(vertical = 8.dp),
+                                        .padding(vertical = 4.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     RadioButton(
@@ -1115,11 +1145,17 @@ fun ScoringScreen(
                             onClick = {
                                 // Update current bowler
                                 scoringScreenState.currentBowler = scoringScreenState.newBowlerName
-                                scoringScreenState.bowlerOvers = 0
-                                scoringScreenState.bowlerMaidens = 0
-                                scoringScreenState.bowlerRuns = 0
-                                scoringScreenState.bowlerWickets = 0
-                                
+
+                                // Retrieve or initialize bowler stats
+                                val bowlerStats = scoringScreenState.getBowlerStats(scoringScreenState.newBowlerName)
+                                scoringScreenState.bowlerOvers = bowlerStats.overs
+                                scoringScreenState.bowlerMaidens = bowlerStats.maidens
+                                scoringScreenState.bowlerRuns = bowlerStats.runs
+                                scoringScreenState.bowlerWickets = bowlerStats.wickets
+
+                                // Ensure bowler is initialized in the stats map
+                                scoringScreenState.initializeBowler(scoringScreenState.newBowlerName)
+
                                 // Reset dialog state
                                 scoringScreenState.showNewBowlerDialog = false
                                 scoringScreenState.newBowlerName = ""
@@ -1295,12 +1331,10 @@ fun ScoringScreen(
                             onClick = {
                                 // Start second innings
                                 scoringScreenState.startSecondInnings()
-                                
                                 // Reset dialog state
                                 scoringScreenState.showInningsCompleteDialog = false
-                                
-                                // Show new batsman and bowler dialogs
-                                scoringScreenState.showNewBatsmanDialog = true
+                                // Show new batsman dialog for openers selection
+                                // (handled by startSecondInnings now)
                             }
                         ) {
                             Text("Start Second Innings")
@@ -1371,245 +1405,92 @@ fun ScoringScreen(
                                 .padding(8.dp)
                         ) {
                             // Match summary
-                            Text(
-                                text = "${scoringScreenState.battingTeamName} vs ${scoringScreenState.bowlingTeamName}",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            
+                            Surface(shape = RectangleShape,
+                                color = Color(0xFF1B5E20),
+                                modifier = Modifier
+                                .fillMaxWidth()
+                                ) {
+                                Text(
+                                    text = "${scoringScreenState.battingTeamName} vs ${scoringScreenState.bowlingTeamName}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
                             Spacer(modifier = Modifier.height(8.dp))
-                            
                             Text(
                                 text = "Innings ${scoringScreenState.currentInnings}",
                                 style = MaterialTheme.typography.titleSmall
                             )
-                            
                             Spacer(modifier = Modifier.height(8.dp))
-                            
                             Text(
                                 text = "${scoringScreenState.battingTeamName}: ${scoringScreenState.totalRuns}/${scoringScreenState.totalWickets} (${scoringScreenState.completedOvers}.${scoringScreenState.currentOverBalls})",
                                 style = MaterialTheme.typography.bodyLarge,
                                 fontWeight = FontWeight.Bold
                             )
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            // Batsmen header
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Text(
-                                    text = "Batsman",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(2f)
-                                )
-                                Text(
-                                    text = "R",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "B",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "4s",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "6s",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "SR",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                            }
-                            
-                            Divider(modifier = Modifier.padding(vertical = 4.dp))
-                            
-                            // Current batsmen
-                            if (scoringScreenState.striker.isNotEmpty()) {
-                                BatsmanScoreRow(
-                                    name = scoringScreenState.striker + " *",
-                                    runs = scoringScreenState.strikerRuns,
-                                    balls = scoringScreenState.strikerBalls,
-                                    fours = scoringScreenState.strikerFours,
-                                    sixes = scoringScreenState.strikerSixes
-                                )
-                            }
-                            
-                            if (scoringScreenState.nonStriker.isNotEmpty()) {
-                                BatsmanScoreRow(
-                                    name = scoringScreenState.nonStriker,
-                                    runs = scoringScreenState.nonStrikerRuns,
-                                    balls = scoringScreenState.nonStrikerBalls,
-                                    fours = scoringScreenState.nonStrikerFours,
-                                    sixes = scoringScreenState.nonStrikerSixes
-                                )
-                            }
-                            
-                            // All other batsmen who have batted
-                            scoringScreenState.battedPlayers.forEach { playerName ->
-                                if (playerName != scoringScreenState.striker && 
-                                    playerName != scoringScreenState.nonStriker) {
-                                    // Get player stats from the state
-                                    val playerStats = scoringScreenState.getBatsmanStats(playerName)
-                                    BatsmanScoreRow(
-                                        name = playerName,
-                                        runs = playerStats.runs,
-                                        balls = playerStats.balls,
-                                        fours = playerStats.fours,
-                                        sixes = playerStats.sixes
-                                    )
-                                }
-                            }
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
+                            Spacer(modifier = Modifier.height(8.dp))
                             // Extras and total
                             Text(
-                                text = "Extras: ${scoringScreenState.totalExtras} (Wd: ${scoringScreenState.totalWides}, Nb: ${scoringScreenState.totalNoBalls}, B: ${scoringScreenState.totalByes}, Lb: ${scoringScreenState.totalLegByes})",
+                                text = "Extras: ${scoringScreenState.totalExtras} (b ${scoringScreenState.totalByes}, lb ${scoringScreenState.totalLegByes}, w ${scoringScreenState.totalWides}, nb ${scoringScreenState.totalNoBalls})",
                                 style = MaterialTheme.typography.bodyMedium
                             )
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            // Bowlers header
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "Total: ${scoringScreenState.totalRuns} (${scoringScreenState.totalWickets} wkts, ${scoringScreenState.totalOvers} Ov)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // Did Not Bat
+                            val didNotBat = scoringScreenState.battingTeamName.let { teamName ->
+                                val allPlayers = if (teamName == scoringScreenState.team1NameSafe) scoringScreenState.team1Players else scoringScreenState.team2Players
+                                allPlayers.filterNot { scoringScreenState.battedPlayers.contains(it) }
+                            }
+                            if (didNotBat.isNotEmpty()) {
                                 Text(
-                                    text = "Bowler",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(2f)
-                                )
-                                Text(
-                                    text = "O",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "M",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "R",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "W",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
-                                )
-                                Text(
-                                    text = "Econ",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.weight(0.7f)
+                                    text = "Did not Bat: " + didNotBat.joinToString(", "),
+                                    style = MaterialTheme.typography.bodySmall
                                 )
                             }
-                            
-                            Divider(modifier = Modifier.padding(vertical = 4.dp))
-                            
-                            // Current bowler
-                            if (scoringScreenState.currentBowler.isNotEmpty()) {
-                                BowlerScoreRow(
-                                    name = scoringScreenState.currentBowler + " *",
-                                    overs = scoringScreenState.bowlerOvers,
-                                    maidens = scoringScreenState.bowlerMaidens,
-                                    runs = scoringScreenState.bowlerRuns,
-                                    wickets = scoringScreenState.bowlerWickets
-                                )
-                            }
-                            
-                            // All other bowlers who have bowled
-                            scoringScreenState.bowlersList.forEach { bowlerName ->
-                                if (bowlerName != scoringScreenState.currentBowler) {
-                                    // Get bowler stats from the state
-                                    val bowlerStats = scoringScreenState.getBowlerStats(bowlerName)
-                                    BowlerScoreRow(
-                                        name = bowlerName,
-                                        overs = bowlerStats.overs,
-                                        maidens = bowlerStats.maidens,
-                                        runs = bowlerStats.runs,
-                                        wickets = bowlerStats.wickets
-                                    )
-                                }
-                            }
-                            
-                            Spacer(modifier = Modifier.height(16.dp))
-                            
-                            // Fall of wickets
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // Fall of Wickets (placeholder, needs actual event tracking)
                             Text(
                                 text = "Fall of Wickets:",
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Bold
                             )
-                            
-                            Spacer(modifier = Modifier.height(4.dp))
-                            
-                            // TODO: Implement fall of wickets display
-                            
-                            if (scoringScreenState.currentInnings == 2) {
-                                Spacer(modifier = Modifier.height(16.dp))
-                                
-                                // Required runs and run rate
-                                val requiredRuns = scoringScreenState.target - scoringScreenState.totalRuns
-                                val remainingBalls = (scoringScreenState.totalOvers * 6) - 
-                                                    (scoringScreenState.completedOvers * 6 + scoringScreenState.currentOverBalls)
-                                val requiredRunRate = if (remainingBalls > 0) {
-                                    (requiredRuns.toFloat() / remainingBalls) * 6
-                                } else {
-                                    0f
+                            // TODO: Replace with actual fall of wicket events
+                            Text(
+                                text = "Not implemented",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            // Bowler Table
+                            Text(
+                                text = "Bowler",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Row(Modifier.fillMaxWidth()) {
+                                Text("O", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                                Text("M", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                                Text("R", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                                Text("W", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                                Text("ECO", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                            }
+                            val bowlingStats = scoringScreenState.bowlersList.map { name ->
+                                name to scoringScreenState.getBowlerStats(name)
+                            }
+                            bowlingStats.forEach { (name, stats) ->
+                                val overs = stats.overs / 6
+                                val balls = stats.overs % 6
+                                val eco = if (stats.overs > 0) stats.runs.toFloat() / (overs + balls / 6f) else 0f
+                                Row(Modifier.fillMaxWidth()) {
+                                    Text("$overs.$balls", modifier = Modifier.weight(1f))
+                                    Text("${stats.maidens}", modifier = Modifier.weight(1f))
+                                    Text("${stats.runs}", modifier = Modifier.weight(1f))
+                                    Text("${stats.wickets}", modifier = Modifier.weight(1f))
+                                    Text(String.format("%.2f", eco), modifier = Modifier.weight(1f))
                                 }
-                                
-                                Text(
-                                    text = "Required: ${requiredRuns} runs from ${remainingBalls / 6}.${remainingBalls % 6} overs",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                
-                                Text(
-                                    text = "Required Run Rate: ${String.format("%.2f", requiredRunRate)}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                
-                                // Projected score
-                                val currentRunRate = if (scoringScreenState.completedOvers > 0 || scoringScreenState.currentOverBalls > 0) {
-                                    val totalBalls = scoringScreenState.completedOvers * 6 + scoringScreenState.currentOverBalls
-                                    (scoringScreenState.totalRuns.toFloat() / totalBalls) * 6
-                                } else {
-                                    0f
-                                }
-                                
-                                val projectedScore = scoringScreenState.totalRuns + 
-                                                    (currentRunRate * ((scoringScreenState.totalOvers * 6) - 
-                                                                      (scoringScreenState.completedOvers * 6 + scoringScreenState.currentOverBalls)) / 6).toInt()
-                                
-                                Text(
-                                    text = "Projected Score: ${projectedScore}",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
                             }
                         }
                     },
@@ -1710,7 +1591,7 @@ fun BowlerScoreRow(
             modifier = Modifier.weight(2f)
         )
         Text(
-            text = "$completedOvers.${balls}",
+            text = "$completedOvers.$balls",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(0.7f)
         )
